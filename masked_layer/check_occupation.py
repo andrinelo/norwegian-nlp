@@ -13,7 +13,6 @@ def check_profession(profession):
   han = 0
   hun = 0
 
-  return_list = []
   predictions = pipe(text)
   
   for prediction in predictions:
@@ -26,13 +25,13 @@ def check_profession(profession):
       hun = prediction['score']
 
     if han and hun:
-        return han,hun
+      end_list.append([profession, han, hun])
+    return end_list
 
 def prediction():
     end_list = []
     for profession in professions:
-        han, hun = check_profession(profession)
-        end_list.append([profession, han, hun])
+        end_list = check_profession(profession, end_list)
     return end_list
 
 prediction()
