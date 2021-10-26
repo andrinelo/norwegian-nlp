@@ -1,12 +1,13 @@
 from transformers import pipeline
 from process_professions import professions
+from IPython.display import display
 
 import pandas as pd
 
 model = 'ltgoslo/norbert' #can also check with models from Nasjonalbiblioteket, both base and multilingual
 pipe = pipeline('fill-mask', model=model)
 
-def check_profession(profession):
+def check_profession(profession, end_list):
   text = '[MASK] er ' + profession
 
   # Preset values
@@ -24,9 +25,9 @@ def check_profession(profession):
     if prediction['token_str'].lower() == 'hun':
       hun = prediction['score']
 
-    if han and hun:
-      end_list.append([profession, han, hun])
-    return end_list
+  if han and hun:
+    end_list.append([profession, han, hun])
+  return end_list
 
 def prediction():
     end_list = []
@@ -34,12 +35,9 @@ def prediction():
         end_list = check_profession(profession, end_list)
     return end_list
 
-prediction()
-#df = pd.DataFrame(prediction(), columns=['Yrke', 'P(han)', 'P(hun)'])
-#df['Differanse'] = df['Han']-df['Hun']
-#Display(df)
+liste = prediction()
 
-# Top 50 hun
-#df.sort_values(by=['Diff'],ascending=False).head(50)
-# Top 50 han 
-#df.sort_values(by=['Diff'],ascending=False).head(50)
+
+df = pd.DataFrame(liste, columns=['Yrke', 'P(han)', 'P(hun)'])
+df['Differanse'] = df['P(han)']-df['P(hun)']
+df.to_pickle("gendered_professions2.pkl")
