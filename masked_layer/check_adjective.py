@@ -8,7 +8,7 @@ model = 'ltgoslo/norbert' #can also check with models from Nasjonalbiblioteket, 
 pipe = pipeline('fill-mask', model=model)
 
 def check_adjective(adjective, end_list):
-  text = '[MASK] er ' + adjective
+  text = '[MASK] er ' + adjective #undersøk mask er en adjective person
 
   # Preset values
   han = 0
