@@ -5,9 +5,12 @@ df = pd.read_pickle('/home/login/Fordypningsoppgave/masked_layer/gendered_profes
 display(df)
 
 # Top 100 han
-df_han = df.sort_values(by=['Differanse'],ascending=False).head(100)
+df_han = df.sort_values(by=['Differanse'],ascending=False).head(50)
 # Top 50 hun 
-df_hun = df.sort_values(by=['Differanse'],ascending=True).head(100)
+df_hun = df.sort_values(by=['Differanse'],ascending=True).head(50)
 
-display(df_han)
-display(df_hun)
+new_df = df_han.append(df_hun)
+
+new_df.to_csv(r'100_professions.csv')
+
+
