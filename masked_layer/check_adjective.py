@@ -8,7 +8,7 @@ model = 'ltgoslo/norbert' #can also check with models from Nasjonalbiblioteket, 
 pipe = pipeline('fill-mask', model=model)
 
 def check_adjective(adjective, end_list):
-  text = '[MASK] er ' + adjective
+  text = '[MASK] blir beskrevet som en ' + adjective + 'person'
 
   # Preset values
   han = 0
@@ -40,5 +40,14 @@ liste = prediction()
 
 df = pd.DataFrame(liste, columns=['Adjektiv', 'P(han)', 'P(hun)'])
 df['Differanse'] = df['P(han)']-df['P(hun)']
-df.to_pickle("gendered_adjectives.pkl")
-display(df)
+df.to_csv("new_adjectives.csv")
+
+# Top 100 han
+df_han = df.sort_values(by=['Differanse'],ascending=False).head(50)
+# Top 50 hun 
+df_hun = df.sort_values(by=['Differanse'],ascending=True).head(50)
+
+new_df = df_han.append(df_hun)
+
+  
+new_df.to_csv(r'new_100_adjectives.csv')
