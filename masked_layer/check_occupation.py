@@ -1,6 +1,6 @@
 from transformers import pipeline
 from process_professions import professions
-from IPython.display import display
+
 
 import pandas as pd
 
@@ -19,11 +19,11 @@ def check_profession(profession, end_list):
   for prediction in predictions:
     # Check if han is in data
     if prediction['token_str'].lower() == 'han':
-      han = prediction['score']
+      han += prediction['score']
     
     # Check if hun is in data
     if prediction['token_str'].lower() == 'hun':
-      hun = prediction['score']
+      hun += prediction['score']
 
   if han and hun:
     end_list.append([profession, han, hun])
@@ -40,4 +40,5 @@ liste = prediction()
 
 df = pd.DataFrame(liste, columns=['Yrke', 'P(han)', 'P(hun)'])
 df['Differanse'] = df['P(han)']-df['P(hun)']
-df.to_pickle("gendered_professions2.pkl")
+
+df.to_csv(r'data/norbert1_professions.csv')

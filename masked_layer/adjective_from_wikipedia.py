@@ -496,7 +496,6 @@ følelsesmessig
 følgende
 følsom
 før
-først inn, først ut
 første
 førstvoterende
 føyelig
@@ -1260,7 +1259,6 @@ sint
 sint som en veps
 sirkulerende
 sist
-sist inn, først ut
 sitrongul
 sjalu
 sjanselaus

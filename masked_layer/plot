@@ -1,6 +1,8 @@
 from matplotlib import pyplot as plt
 from matplotlib.text import TextPath
+from adjustText import adjust_text
 import pandas as pd
+import numpy as np
 from glob import glob
 from numpy.random import default_rng
 plt.style.use(['tableau-colorblind10'])
@@ -30,27 +32,151 @@ class FancyPlot:
         return pd.read_csv(path)
 
     def path(self, folder):
-        return glob(folder + "/*.csv")[0] 
+        return glob(folder + "/adjectives.csv")[0] 
 
     def generateMarkers(self,markerName):
         return TextPath((0,0), markerName)
     
     """
      TODO make a box around each word
-     TODO markersize does that all words take up the same space. I want that all words/letters have the same font size
     """
+    
+
     def plot(self):
-        rng = default_rng(seed=7) #make sure we get the same numbers every time
+        x = [0.7144784219563007	,
+        0.7139367200434208	,
+        0.6474172510206699	,
+        0.6453239470720291	,
+        0.5788903832435608	,
+        0.5701774284243584	,
+        0.5334633216261864	,
+        0.5298876762390137	,
+        0.5289900675415993	,
+        0.5275847390294075	,
+        0.5193681754171848	,
+        0.511889211833477	,
+        0.5065640602260828	,
+        0.4975934103131294	,
+        0.4892802555114031	,
+        0.47895753011107445	,
+        0.47727956250309944	,
+        0.47689470648765564	,
+        0.4743496850132942	,
+        0.4728274643421173	,
+        0.4696327894926071	,
+        0.4663454331457615	,
+        0.46431005373597145	,
+        0.46420764923095703	,
+        0.464204803109169	,
+        0.4577440842986107	,
+        0.4552631974220276	,
+        0.45102333649992943	,
+        0.45001259353011847	,
+        0.44797233492136	,
+        0.4463416859507561	,
+        0.4462184011936188	,
+        0.44596853107213974	,
+        0.44548384100198746	,
+        0.44371784571558237	,
+        0.4434709846973419	,
+        0.44239718466997147	,
+        0.4396584713831544	,
+        0.4381801709532738	,
+        0.4282613964751363	,
+        0.4282187968492508	,
+        0.4271223843097687	,
+        0.42659248039126396	,
+        0.4263624995946884	,
+        0.4223507549613714	,
+        0.4199392646551132	,
+        0.41901084780693054	,
+        0.41724495217204094	,
+        0.4162732884287834	,
+        0.41471059061586857	,
+        -0.4896177500486374	,
+        -0.4767252169549465	,
+        -0.45832559466362	,
+        -0.45771154668182135	,
+        -0.4392032101750374	,
+        -0.4362244997173548	,
+        -0.4346810579299927	,
+        -0.4305649623274803	,
+        -0.42795637995004654	,
+        -0.4207887426018715	,
+        -0.39773934707045555	,
+        -0.3961932323873043	,
+        -0.39028749987483025	,
+        -0.3820606768131256	,
+        -0.37815587408840656	,
+        -0.3769076317548752	,
+        -0.3741390258073807	,
+        -0.3724300265312195	,
+        -0.3703891187906265	,
+        -0.3690759390592575	,
+        -0.36841757595539093	,
+        -0.3612583503127098	,
+        -0.36004846170544624	,
+        -0.35836608707904816	,
+        -0.3572853282094002	,
+        -0.3569539934396744	,
+        -0.34749308228492737	,
+        -0.3448136616498232	,
+        -0.3355618789792061	,
+        -0.3317561522126198	,
+        -0.3314073085784912	,
+        -0.3298560380935669	,
+        -0.3294242396950722	,
+        -0.3251221925020218	,
+        -0.3244708850979805	,
+        -0.32158275693655014	,
+        -0.31608714908361435	,
+        -0.31426766514778137	,
+        -0.3135542720556259	,
+        -0.3107556998729706	,
+        -0.30976422131061554	,
+        -0.30851592123508453	,
+        -0.3068505823612213	,
+        -0.3062700740993023	,
+        -0.3051508143544197	,
+        -0.3047659918665886	,
+        -0.304639495909214	,
+        -0.3035024031996727	,
+        -0.3020416796207428	,
+        -0.30162473767995834]
+        rng = np.random.default_rng(seed=1)
+        y = rng.integers(low=0, high=1, size=100)
+        
         fig1 = plt.figure(facecolor='white')
-        ax1 = plt.axes()
+        
+        fig, ax = plt.subplots()
+        
+        plt.plot(x, y, 'bo')
+        texts = [plt.text(x[i], y[i], 'Text%s') for i in range(len(x))]
+        
+
+        
+        #adjust_text(texts)
+        """
+        ax1.plot(row["Differanse"],rng.random(), 'bo')
+        texts = [plt.text(row["Differanse"], rng.random(), row["Adjektiv"], ha='center', va='center') for i in range(len(x))]
+        adjust_text(texts)
+        """
+
+        """
+        rng = default_rng(seed=7) #make sure we get the same numbers every time
         for index, row in self.df_.iterrows():
-            ax1.plot(row["Differanse"],rng.random(), marker = self.generateMarkers(row["Adjektivv"]), markersize = len(row["Adjektivv"])*6, mew=0.4) 
+            ax1.plot(row["Differanse"],rng.random(), 'bo')
+            texts = plt.text(row["Differanse"], rng.random(), row["Adjektiv"], ha='center', va='center')
+            adjust_text(texts)
+            #ax1.plot(row["Differanse"],rng.random(), marker = row["Adjektiv"], markersize = len(row["Adjektiv"])*6, mew=0.4)
+            #ax1.plot(row["Differanse"],rng.random(), marker = self.generateMarkers(row["Adjektiv"]), markersize = len(row["Adjektiv"])*6, mew=0.4) 
         
         ax1.axes.get_yaxis().set_visible(False)
         ax1.set_xlim([-1, 1])
         ax1.set_ylim([-0.1, 1.1])
         ax1.set_xlabel("Difference")
-        plt.savefig("figs/_blir_beskrevet_som_en_adjektiv_person.eps")
+        """
+        plt.savefig("figs/_blir_beskrevet_som_en_adjektiv_person.eps")s
         plt.show()
 
 if __name__== "__main__":

@@ -19,11 +19,11 @@ def check_adjective(adjective, end_list):
   for prediction in predictions:
     # Check if han is in data
     if prediction['token_str'].lower() == 'han':
-      han = prediction['score']
+      han += prediction['score']
     
     # Check if hun is in data
     if prediction['token_str'].lower() == 'hun':
-      hun = prediction['score']
+      hun += prediction['score']
 
   if han and hun:
     end_list.append([adjective, han, hun])
@@ -40,7 +40,7 @@ liste = prediction()
 
 df = pd.DataFrame(liste, columns=['Adjektiv', 'P(han)', 'P(hun)'])
 df['Differanse'] = df['P(han)']-df['P(hun)']
-df.to_csv("new_adjectives.csv")
+df.to_csv("data/norbert_adjectives.csv")
 
 # Top 100 han
 df_han = df.sort_values(by=['Differanse'],ascending=False).head(50)
@@ -50,4 +50,4 @@ df_hun = df.sort_values(by=['Differanse'],ascending=True).head(50)
 new_df = df_han.append(df_hun)
 
   
-new_df.to_csv(r'new_100_adjectives.csv')
+new_df.to_csv(r'norbert_100_adjectives.csv')
