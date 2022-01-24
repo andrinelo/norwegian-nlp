@@ -17,7 +17,8 @@ def get_text_from_file(file):
         lines = f.readlines()
         new_list = []
         for line in lines: 
-            new_list.append(line.replace("\n"," "))
+            new_list.append(line.replace("\n"," ").replace('\r', ' '))
+        print(new_list[:20])
         stripped_text = ''.join(new_list)
         #print(stripped_text[:1000])
         return stripped_text
@@ -45,15 +46,22 @@ def count_pronouns(string):
 def group_gender_pronouns(dict): 
     male_pronouns = dict['han'] + dict['ham']
     female_pronouns = dict['hun'] + dict['henne'] + dict['ho']
-    return {'male pronouns': male_pronouns, 'female pronouns': female_pronouns}
+    return 'Male pronouns: ' + str(male_pronouns) + ', female pronouns ' + str(female_pronouns)
+
+def save_to_file(filename, text, source_file):
+    print('=== Saving number of pronouns to file ===')
+    write_text = source_file + ',' + text
+    with open(filename, 'w') as file: 
+        print('Create file...')
+        file.write(write_text)
+        print('Content saved!')
 
 def main(): 
 
     selected_file = r'C:\Users\regineru\Desktop\code\Fordypningsoppgave\NorBERT\Norsk_aviskorpus\1\19981013-20010307'
     text = get_text_from_file(selected_file)
     pronoun_count_dictionary = count_pronouns(text)
-    gendered_pronouns = group_gender_pronouns(pronoun_count_dictionary)
-
-    print(gendered_pronouns)
+    gendered_pronouns_text = group_gender_pronouns(pronoun_count_dictionary)
+    save_to_file('pronoun_count/gendered_pronouns.txt', gendered_pronouns_text, selected_file)
 
 main()
