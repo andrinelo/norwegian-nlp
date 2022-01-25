@@ -4,6 +4,7 @@ NorBERT is trained on
 * Norsk Aviskorpus; 1.7 billion words;
 * Bokmål Wikipedia; 160 million words;
 * Nynorsk Wikipedia; 40 million words;
+
 The corpus files are excluded from the code due to size and easy availability online.
 
 To count the number of pronouns in Norsk Aviskorpus:
