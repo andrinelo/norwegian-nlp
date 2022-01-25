@@ -1,4 +1,4 @@
-# master-thesis
+# Gender Bias in Norwegian Contextualized Models NorBert and NB-BERT
 ## Count pronouns in Norwegian Language Model NorBERT
 NorBERT is trained on 
 * Norsk Aviskorpus; 1.7 billion words;
