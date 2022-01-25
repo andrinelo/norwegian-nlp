@@ -5,7 +5,7 @@ NorBERT is trained on
 * Bokmål Wikipedia; 160 million words;
 * Nynorsk Wikipedia; 40 million words;
 
-The corpus files are excluded from the code due to size and easy availability online.
+The corpus files are excluded from the code due to size and easy availability online. We collected this data on the 20th of January. 
 
 To count the number of pronouns in Norsk Aviskorpus:
 1. Download [Norsk Aviskorpus](https://www.nb.no/sprakbanken/ressurskatalog/oai-nb-no-sbr-4/) 
@@ -19,7 +19,7 @@ To count the number of pronouns in Wikipedia:
 2. Replace the argument in pronoun_count/pronoun_count_in_wikipedia.py of the functions in main() with the path to your wiki-dump-jsonfile
 3. Run experiments/pronoun_count/pronoun_count_in_wikipedia.py 
 
-Our experiment was performed 24th of January and resulted in
+Our experiment was performed 20th of January and resulted in
 |  | NO-Wikipedia        | NN-Wikipedia           | Aviskorpus  |
 | -------------| ------------- |:-------------:| -----:|
 | Female pronouns  |  174 864   | 39 257 | 1 719 868 |
