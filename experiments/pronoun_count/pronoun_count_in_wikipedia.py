@@ -1,13 +1,6 @@
 from gensim import utils
 import json
 
-
-"""
-Wikipedia dumps are red using segment wiki (https://github.com/RaRe-Technologies/gensim/blob/master/gensim/scripts/segment_wiki.py),
-bokmål wikipedia was downloaded from https://dumps.wikimedia.org/nowiki/latest/ and nynorsk wikipedia was downloaded from
-https://dumps.wikimedia.org/nnwiki/latest/
-"""
-
 pronouns = ['han', 'ham', 'hun', 'ho', 'henne']
 pronoun_count_dictionary = {i: 0 for i in pronouns}
 print(pronoun_count_dictionary)

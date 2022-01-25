@@ -4,10 +4,6 @@ import codecs
 from logging import root
 import os
 
-
-#The corpus found and downloaded from https://www.nb.no/sprakbanken/ressurskatalog/oai-nb-no-sbr-4/. 
-#.tar.gz and .gz files unzipped in folder named in master-thesis\NorBERT\Norsk_aviskorpus
-
 def get_text_from_file(file):
     #Extract all text from file and return a text without \n and \r
     print('=== Starting read from file ===')
@@ -57,7 +53,7 @@ def iterate_files(rootdir, count_all_other_words_total, count_all_pronouns_total
 if __name__ == '__main__':
 
     #Define root directory
-    rootdir =  r'C:\Users\regineru\Desktop\code\Fordypningsoppgave\NorBERT\Norsk_aviskorpus/'
+    rootdir =  r'add path here'
     pronouns = ['han', 'ham', 'hun', 'ho', 'henne']
     
     pronoun_count_dictionary = {i: 0 for i in pronouns}
