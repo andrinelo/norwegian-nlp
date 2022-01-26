@@ -24,8 +24,8 @@ def count_pronouns(string):
     count_all_other_words = 0
     count_all_pronouns = 0
     for word in string.split(' '): 
-        if word in pronouns: 
-            pronoun_count_dictionary[word] += 1
+        if word.lower() in pronouns: 
+            pronoun_count_dictionary[word.lower()] += 1
             count_all_pronouns += 1
         else: 
             count_all_other_words += 1
@@ -53,8 +53,10 @@ def iterate_files(rootdir, count_all_other_words_total, count_all_pronouns_total
 if __name__ == '__main__':
 
     #Define root directory
-    rootdir =  r'add path here'
+    rootdir =  r'C:\Users\regineru\Desktop\code\master-thesis\experiments\pronoun_count\NorBERT\Norsk_aviskorpus'
     pronouns = ['han', 'ham', 'hun', 'ho', 'henne']
+    pronouns_extended = ['han', 'ham', 'hun', 'ho', 'henne', 
+    'mann', 'kvinne', 'gutt', 'jente', 'herre', 'dame', 'mor', 'far', 'ektemann']
     
     pronoun_count_dictionary = {i: 0 for i in pronouns}
     count_all_other_words_total = 0
