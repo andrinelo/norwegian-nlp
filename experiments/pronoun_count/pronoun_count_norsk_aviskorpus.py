@@ -36,6 +36,7 @@ def count_pronouns(string):
 def group_gender_pronouns(dict): 
     #Grop the male and female pronouns from pronoun_count_dictionary and return a string with the 
     # summed number of each gender (formatted as a string to be printed)
+    #TODO Update if updating pronouns
     male_pronouns = dict['han'] + dict['ham']
     female_pronouns = dict['hun'] + dict['henne'] + dict['ho']
     return ' [Male pronouns: ' + str(male_pronouns) + ', female pronouns ' + str(female_pronouns) + ']'
@@ -55,8 +56,7 @@ if __name__ == '__main__':
     #Define root directory
     rootdir =  r'C:\Users\regineru\Desktop\code\master-thesis\experiments\pronoun_count\NorBERT\Norsk_aviskorpus'
     pronouns = ['han', 'ham', 'hun', 'ho', 'henne']
-    pronouns_extended = ['han', 'ham', 'hun', 'ho', 'henne', 
-    'mann', 'kvinne', 'gutt', 'jente', 'herre', 'dame', 'mor', 'far', 'ektemann']
+    pronouns_extended = ['mann', 'kvinne', 'gutt', 'gut', 'jente', 'herre', 'dame']
     
     pronoun_count_dictionary = {i: 0 for i in pronouns}
     count_all_other_words_total = 0
