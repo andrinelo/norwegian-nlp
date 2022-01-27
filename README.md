@@ -19,8 +19,14 @@ To count the number of pronouns in Wikipedia:
 2. Replace the argument in pronoun_count/pronoun_count_in_wikipedia.py of the functions in main() with the path to your wiki-dump-jsonfile
 3. Run experiments/pronoun_count/pronoun_count_in_wikipedia.py 
 
-Our experiment was performed 20th of January and resulted in
+Our experiment was performed 20th of January and resulted in this count for the pronouns "han", "ham", "hun", "ho", "henne"
 |  | NO-Wikipedia        | NN-Wikipedia           | Aviskorpus  |
 | -------------| ------------- |:-------------:| -----:|
-| Female pronouns  |  174 864   | 39 257 | 1 719 868 |
-| Male pronouns   | 636 968      | 154 091     |   5 558 953 |
+| Female pronouns  | 254 752  | 62 667 | 2 304 084 |
+| Male pronouns   | 918 999      | 239 107     |   7 539 723 |
+
+This is the result for the count of the gendered words "mann", "kvinne", "gutt", "gut", "jente", "herre", "dame"
+|  | NO-Wikipedia        | NN-Wikipedia           | Aviskorpus  |
+| -------------| ------------- |:-------------:| -----:|
+| Female pronouns  | 8 813  | 1 569 | 259 924 |
+| Male pronouns   | 18 744      | 3 328     |   490 919 |
