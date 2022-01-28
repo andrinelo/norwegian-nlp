@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 
 model_NorBERT = 'ltgoslo/norbert'
@@ -134,12 +135,12 @@ def get_embeddings_from_text(texts, han_hun):
 
         target_word_embeddings.append(word_embedding) #= embeddings for "bank" i kontekst av de ulike setningene
     #print(target_word_embeddings)
+    return target_word_embeddings
 
-    print('Finding average')
 
 #get average vector of "han". switch row and cols to sum each colums and take average
 
-
+def get_average(target_word_embeddings, han_hun): 
     switch_rows_and_cols_vector = [[] for i in range(len(target_word_embeddings[0]))]
 
     for number_index in range(len(target_word_embeddings[0])):
@@ -158,13 +159,33 @@ def get_embeddings_from_text(texts, han_hun):
 def make_numpy(vector): 
     return np.array(vector)
 
-def find_pca(han_vector, hun_vector):
+def find_difference(han_vector, hun_vector):
     han = make_numpy(han_vector)
     hun = make_numpy(hun_vector)
 
     diffs = hun-han
 
     return diffs
+
+def calculate_pca(diff_vector): 
+    pca = PCA(n_components=2)
+    principalComponents = pca.fit_transform(diff_vector)
+    principalDf = pd.DataFrame(data = principalComponents, columns = ['principal component 1', 'principal component 2'])
+    
+    return principalDf
+
+def plot_scatter(principal_emb_Df): 
+    plt.figure()
+    plt.figure(figsize=(10,10))
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=14)
+    plt.xlabel('Principal Component - 1',fontsize=20)
+    plt.ylabel('Principal Component - 2',fontsize=20)
+    plt.title("Principal Component Analysis of Breast Cancer Dataset",fontsize=20)
+    
+    
+    plt.scatter(principal_emb_Df['principal component 1'], principal_emb_Df['principal component 2'], c = np.random.rand(768), s = 50)
+    plt.show()
     
 
 if __name__ == '__main__':
@@ -179,13 +200,32 @@ if __name__ == '__main__':
             "hun er sykepleier.", 
             "I går var hun der."]
 
-    han = get_embeddings_from_text(texts_han, 'han')
-    hun = get_embeddings_from_text(texts_hun, 'hun')
+    han_embeddings = make_numpy(get_embeddings_from_text(texts_han, 'han'))
+    hun_embeddings = make_numpy(get_embeddings_from_text(texts_hun, 'hun'))
+
+    han_transposed = han_embeddings.transpose()
+    hun_transposed = hun_embeddings.transpose()
+
+    diff_embeddings = han_transposed-hun_transposed
+    print(diff_embeddings)
     
-    pca = find_pca(han, hun)
-    transposed = np.transpose(pca) #funker ikke??
-    print(pca.shape)
+    # normalizing the features
+    embeddings_standarized = StandardScaler().fit_transform(han_transposed) 
 
-    #print("The gender difference or something is", pca)
+    print(np.mean(embeddings_standarized), np.std(embeddings_standarized))
 
-#distances_df = pd.DataFrame(list_of_distances, columns=['text1', 'text2', 'distance'])
+    emb_feat_cols = ['feature'+str(i) for i in range(embeddings_standarized.shape[1])]
+
+    normalised_emb = pd.DataFrame(embeddings_standarized, columns=emb_feat_cols)
+    print(normalised_emb)
+
+    pca_emb = PCA(n_components=2)
+    principalComponents_emb = pca_emb.fit_transform(embeddings_standarized)
+
+    principal_emb_Df = pd.DataFrame(data = principalComponents_emb, columns = ['principal component 1', 'principal component 2'])
+    print(principal_emb_Df.tail())
+
+    print('Explained variation per principal component: {}'.format(pca_emb.explained_variance_ratio_))
+
+    plot_scatter(principal_emb_Df)
+    
