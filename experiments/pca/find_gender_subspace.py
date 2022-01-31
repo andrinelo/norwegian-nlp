@@ -139,7 +139,7 @@ def get_embeddings_from_text(texts, han_hun):
 
 
 #get average vector of "han". switch row and cols to sum each colums and take average
-
+"""
 def get_average(target_word_embeddings, han_hun): 
     switch_rows_and_cols_vector = [[] for i in range(len(target_word_embeddings[0]))]
 
@@ -155,7 +155,7 @@ def get_average(target_word_embeddings, han_hun):
         avg_vector.append(avg)
     print('Average vector for ', han_hun, ':', avg_vector)
     return avg_vector
-
+"""
 def make_numpy(vector): 
     return np.array(vector)
 
@@ -194,11 +194,13 @@ def plot_bar(pca_emb):
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=14)
     plt.xlabel('Principal Component',fontsize=20)
-    plt.ylabel('Variance',fontsize=20)
-    plt.title("Principal Component Analysis of Norwegian BERT word embeddings",fontsize=20)
+    plt.ylabel('Percentage of explained variation',fontsize=20)
+    plt.title("Explained variation per principal component",fontsize=20)
 
-    x = ['principal component 1', 'principal component 2']
-    y = [pca_emb.explained_variance_ratio_[0], pca_emb.explained_variance_ratio_[1]]
+    x = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+    y = [pca_emb.explained_variance_ratio_[0], pca_emb.explained_variance_ratio_[1], pca_emb.explained_variance_ratio_[2], pca_emb.explained_variance_ratio_[3],
+    pca_emb.explained_variance_ratio_[4], pca_emb.explained_variance_ratio_[5], pca_emb.explained_variance_ratio_[6], pca_emb.explained_variance_ratio_[7], 
+    pca_emb.explained_variance_ratio_[8], pca_emb.explained_variance_ratio_[9]] 
     plt.bar(x, y)
     plt.show()
 
@@ -257,10 +259,11 @@ if __name__ == '__main__':
     normalised_emb = pd.DataFrame(embeddings_standarized, columns=emb_feat_cols)
     print(normalised_emb)
 
-    pca_emb = PCA(n_components=2)
+    pca_emb = PCA(n_components=10)
     principalComponents_emb = pca_emb.fit_transform(embeddings_standarized)
 
-    principal_emb_Df = pd.DataFrame(data = principalComponents_emb, columns = ['principal component 1', 'principal component 2'])
+    principal_emb_Df = pd.DataFrame(data = principalComponents_emb, columns = ['principal component 1', 'principal component 2', 'prinicpal component 3', 
+    'principal component 4', 'principal component 5', 'principal component 6', '7', '8', '9', '10'])
     print(principal_emb_Df.tail())
 
     print('Explained variation per principal component: {}'.format(pca_emb.explained_variance_ratio_))
