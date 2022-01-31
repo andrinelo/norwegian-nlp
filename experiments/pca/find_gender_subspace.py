@@ -181,24 +181,62 @@ def plot_scatter(principal_emb_Df):
     plt.yticks(fontsize=14)
     plt.xlabel('Principal Component - 1',fontsize=20)
     plt.ylabel('Principal Component - 2',fontsize=20)
-    plt.title("Principal Component Analysis of Breast Cancer Dataset",fontsize=20)
+    plt.title("Principal Component Analysis of Norwegian BERT word embeddings",fontsize=20)
     
     
-    plt.scatter(principal_emb_Df['principal component 1'], principal_emb_Df['principal component 2'], c = np.random.rand(768), s = 50)
+    plt.scatter(principal_emb_Df['principal component 1'], principal_emb_Df['principal component 2'], c = np.random.rand(768), s = 10)
     plt.show()
     
+
+def plot_bar(pca_emb): 
+    plt.figure()
+    plt.figure(figsize=(10,10))
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=14)
+    plt.xlabel('Principal Component',fontsize=20)
+    plt.ylabel('Variance',fontsize=20)
+    plt.title("Principal Component Analysis of Norwegian BERT word embeddings",fontsize=20)
+
+    x = ['principal component 1', 'principal component 2']
+    y = [pca_emb.explained_variance_ratio_[0], pca_emb.explained_variance_ratio_[1]]
+    plt.bar(x, y)
+    plt.show()
+
+    """
+    fig = plt.figure()
+    fig.suptitle('Bar chart BERT')
+    ax = fig.add_axes([0,0,1,1])
+    x = ['principal component 1', 'principal component 2']
+    y = [pca_emb.explained_variance_ratio_[0], pca_emb.explained_variance_ratio_[1]]
+    ax.bar(x, y)
+    ax.set_ylabel('Scores')
+    ax.set_title('Scores by group and gender')
+    plt.show()
+    """
 
 if __name__ == '__main__':
 
     texts_han = ["han",
             "han er snekker.",
             "han er sykepleier.", 
-            "I går var han der."] # = ord å sammenlikne target word med
+            "i går var han der.",
+            "han er kokk", 
+            "er han ikke kul", 
+            "jeg kjenner han", 
+            "han elsker meg", 
+            "jeg liker han", 
+            "se på han"] # = ord å sammenlikne target word med
     
     texts_hun = ["hun",
             "hun er snekker.",
             "hun er sykepleier.", 
-            "I går var hun der."]
+            "I går var hun der.",
+            "hun er kokk", 
+            "er hun ikke kul", 
+            "jeg kjenner hun", 
+            "hun elsker meg", 
+            "jeg liker hun", 
+            "se på hun"]
 
     han_embeddings = make_numpy(get_embeddings_from_text(texts_han, 'han'))
     hun_embeddings = make_numpy(get_embeddings_from_text(texts_hun, 'hun'))
@@ -207,7 +245,7 @@ if __name__ == '__main__':
     hun_transposed = hun_embeddings.transpose()
 
     diff_embeddings = han_transposed-hun_transposed
-    print(diff_embeddings)
+    print('Diff embedding: ', diff_embeddings)
     
     # normalizing the features
     embeddings_standarized = StandardScaler().fit_transform(han_transposed) 
@@ -227,5 +265,10 @@ if __name__ == '__main__':
 
     print('Explained variation per principal component: {}'.format(pca_emb.explained_variance_ratio_))
 
-    plot_scatter(principal_emb_Df)
+    plot_bar(pca_emb)
+    #plot_scatter(principal_emb_Df)
+
+    #hvorfor så mange prikker? 
+    #få setninger 
+    #hva med å plotte hun og han OG forskjell i hver sin farge?
     
