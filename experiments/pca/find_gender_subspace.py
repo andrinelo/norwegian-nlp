@@ -10,36 +10,9 @@ import torch
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-
-model_NorBERT = 'ltgoslo/norbert'
-model_NB_BERT = 'NbAiLab/nb-bert-base'
-model_mBERT = 'bert-base-multilingual-cased'
-
-#return masked modelling pipeline for imput model
-def fill_mask_pipeline(model): 
-    return pipeline('fill-mask', model=model)
-
-#return 
-def sentiment_analysis_pipeline(model): 
-    return pipeline('sentiment-analysis', model=model)
-
-#PCA.fit_transform([word_vectors_from_dataset])
-
 """
 Following code retrieved (copied) from https://towardsdatascience.com/3-types-of-contextualized-word-embeddings-from-bert-using-transfer-learning-81fcefe3fe6d
 """
-
-# Loading the pre-trained BERT model
-###################################
-# Embeddings will be derived from
-# the outputs of this model
-model = BertModel.from_pretrained('ltgoslo/norbert', output_hidden_states = True,)
-# Setting up the tokenizer
-###################################
-# This is the same tokenizer that
-# was used in the model to generate
-# embeddings to ensure consistency
-tokenizer = BertTokenizer.from_pretrained('ltgoslo/norbert')
 
 def bert_text_preparation(text, tokenizer):
     """Preparing the input for BERT
@@ -115,7 +88,8 @@ def get_bert_embeddings(tokens_tensor, segments_tensors, model):
 # forms of the word 'bank' to show the
 # value of contextualized embeddings
 
-def get_embeddings_from_text(texts, han_hun):
+def get_embeddings_from_text(texts, han_hun, model, tokenizer):
+
 
     # Getting embeddings for the target
     # word in all given contexts
@@ -156,23 +130,39 @@ def get_average(target_word_embeddings, han_hun):
     print('Average vector for ', han_hun, ':', avg_vector)
     return avg_vector
 """
+
 def make_numpy(vector): 
     return np.array(vector)
 
 def find_difference(han_vector, hun_vector):
     han = make_numpy(han_vector)
     hun = make_numpy(hun_vector)
-
     diffs = hun-han
-
     return diffs
 
-def calculate_pca(diff_vector): 
-    pca = PCA(n_components=2)
-    principalComponents = pca.fit_transform(diff_vector)
-    principalDf = pd.DataFrame(data = principalComponents, columns = ['principal component 1', 'principal component 2'])
+def get_pca_emb(emb_feat_dF, n): 
+    #calculate PCA of top 10 features
+    pca_emb = PCA(n_components=n)
+    principalComponents_emb = pca_emb.fit_transform(emb_feat_dF)
+    principal_emb_Df = pd.DataFrame(data = principalComponents_emb, columns = ['pc {}'.format(i) for i in range(1, n+1)])
+    print(principal_emb_Df.tail())
+
+    print('Explained variation per principal component: {}'.format(pca_emb.explained_variance_ratio_))
+
+    return pca_emb
+
+
+def get_feat_dF(embeddings): 
+    # normalizing the features
+    embeddings_standarized = StandardScaler().fit_transform(embeddings) 
+    print('Mean and std.div: ', np.mean(embeddings_standarized), np.std(embeddings_standarized))
     
-    return principalDf
+    #create data frame with features
+    emb_feat_cols = ['feature'+str(i) for i in range(embeddings_standarized.shape[1])]
+    emb_feat_dF = pd.DataFrame(embeddings_standarized, columns=emb_feat_cols)
+    print(emb_feat_dF)
+
+    return emb_feat_dF
 
 def plot_scatter(principal_emb_Df): 
     plt.figure()
@@ -182,11 +172,8 @@ def plot_scatter(principal_emb_Df):
     plt.xlabel('Principal Component - 1',fontsize=20)
     plt.ylabel('Principal Component - 2',fontsize=20)
     plt.title("Principal Component Analysis of Norwegian BERT word embeddings",fontsize=20)
-    
-    
     plt.scatter(principal_emb_Df['principal component 1'], principal_emb_Df['principal component 2'], c = np.random.rand(768), s = 10)
-    plt.show()
-    
+    plt.show()  
 
 def plot_bar(pca_emb): 
     plt.figure()
@@ -204,74 +191,64 @@ def plot_bar(pca_emb):
     plt.bar(x, y)
     plt.show()
 
-    """
-    fig = plt.figure()
-    fig.suptitle('Bar chart BERT')
-    ax = fig.add_axes([0,0,1,1])
-    x = ['principal component 1', 'principal component 2']
-    y = [pca_emb.explained_variance_ratio_[0], pca_emb.explained_variance_ratio_[1]]
-    ax.bar(x, y)
-    ax.set_ylabel('Scores')
-    ax.set_title('Scores by group and gender')
-    plt.show()
-    """
+def extract_sentences(filename, sheetname):
 
-if __name__ == '__main__':
+    df = pd.read_excel(filename, sheet_name=sheetname)
 
-    texts_han = ["han",
-            "han er snekker.",
-            "han er sykepleier.", 
-            "i går var han der.",
-            "han er kokk", 
-            "er han ikke kul", 
-            "jeg kjenner han", 
-            "han elsker meg", 
-            "jeg liker han", 
-            "se på han"] # = ord å sammenlikne target word med
-    
-    texts_hun = ["hun",
-            "hun er snekker.",
-            "hun er sykepleier.", 
-            "I går var hun der.",
-            "hun er kokk", 
-            "er hun ikke kul", 
-            "jeg kjenner hun", 
-            "hun elsker meg", 
-            "jeg liker hun", 
-            "se på hun"]
+    han_sentences = df['Han'].values
+    hun_sentences = df['Hun'].values
 
-    han_embeddings = make_numpy(get_embeddings_from_text(texts_han, 'han'))
-    hun_embeddings = make_numpy(get_embeddings_from_text(texts_hun, 'hun'))
+    return han_sentences, hun_sentences
 
-    han_transposed = han_embeddings.transpose()
-    hun_transposed = hun_embeddings.transpose()
+def run(sentence_path, sheet_name, model_name, number_of_features):
+    han, hun = extract_sentences(filename=sentence_path, sheetname=sheet_name)
 
-    diff_embeddings = han_transposed-hun_transposed
-    print('Diff embedding: ', diff_embeddings)
-    
-    # normalizing the features
-    embeddings_standarized = StandardScaler().fit_transform(han_transposed) 
+    texts_han = ['han'] + han
+    texts_hun = ['hun'] + hun
 
-    print(np.mean(embeddings_standarized), np.std(embeddings_standarized))
+    # Loading the pre-trained BERT model
+    ###################################
+    # Embeddings will be derived from
+    # the outputs of this model
+    model = BertModel.from_pretrained(model_name, output_hidden_states = True,)
 
-    emb_feat_cols = ['feature'+str(i) for i in range(embeddings_standarized.shape[1])]
+    # Setting up the tokenizer
+    ###################################
+    # This is the same tokenizer that
+    # was used in the model to generate
+    # embeddings to ensure consistency
+    tokenizer = BertTokenizer.from_pretrained(model_name)
 
-    normalised_emb = pd.DataFrame(embeddings_standarized, columns=emb_feat_cols)
-    print(normalised_emb)
 
-    pca_emb = PCA(n_components=10)
-    principalComponents_emb = pca_emb.fit_transform(embeddings_standarized)
+    han_embeddings = make_numpy(get_embeddings_from_text(texts_han, 'han', model, tokenizer)).transpose()
+    hun_embeddings = make_numpy(get_embeddings_from_text(texts_hun, 'hun', model, tokenizer)).transpose()
 
-    principal_emb_Df = pd.DataFrame(data = principalComponents_emb, columns = ['principal component 1', 'principal component 2', 'prinicpal component 3', 
-    'principal component 4', 'principal component 5', 'principal component 6', '7', '8', '9', '10'])
-    print(principal_emb_Df.tail())
+    diff_embeddings = han_embeddings-hun_embeddings
+    #print('Diff embedding: ', diff_embeddings)
 
-    print('Explained variation per principal component: {}'.format(pca_emb.explained_variance_ratio_))
+    emb_feat_dF = get_feat_dF(diff_embeddings)
 
+    pca_emb = get_pca_emb(emb_feat_dF, number_of_features)
+
+    #plot results
     plot_bar(pca_emb)
     #plot_scatter(principal_emb_Df)
 
-    #hvorfor så mange prikker? 
-    #få setninger 
-    #hva med å plotte hun og han OG forskjell i hver sin farge?
+
+
+if __name__ == '__main__':
+
+    NorBERT = 'ltgoslo/norbert'
+    NB_BERT = 'NbAiLab/nb-bert-base'
+    mBERT = 'bert-base-multilingual-cased'
+
+    #fill in the following variables to plot pca of top n features in sheet in .xlsx file calculated with one of the norwegian language models
+
+    sentence_path = 'experiments\pca\sample_sentences.xlsx'
+    sheet_name = 'hun_han_alle'
+    model_name = NorBERT
+    number_of_features = 10
+
+    run(sentence_path=sentence_path, sheet_name=sheet_name, model_name=model_name, number_of_features=number_of_features)
+
     
