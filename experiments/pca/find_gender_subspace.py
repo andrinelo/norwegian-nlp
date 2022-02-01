@@ -85,10 +85,10 @@ def get_bert_embeddings(tokens_tensor, segments_tensors, model):
 # Text corpus
 ##############
 # These sentences show the different
-# forms of the word 'bank' to show the
+# forms of the word 'han/hun' to show the
 # value of contextualized embeddings
 
-def get_embeddings_from_text(texts, han_hun, model, tokenizer):
+def get_embeddings_from_text(texts, gender_word, model, tokenizer):
 
 
     # Getting embeddings for the target
@@ -102,7 +102,7 @@ def get_embeddings_from_text(texts, han_hun, model, tokenizer):
         #print('Tokenized text: ', tokenized_text)
         
         # Find the position 'bank' in list of tokens
-        word_index = tokenized_text.index(han_hun) # = dét ordet som er i alle setningne i form av ulike kontekster
+        word_index = tokenized_text.index(gender_word) # = dét ordet som er i alle setningne i form av ulike kontekster
         # Get the embedding for bank
         word_embedding = list_token_embeddings[word_index]
 
@@ -200,11 +200,11 @@ def extract_sentences(filename, sheetname):
 
     return han_sentences, hun_sentences
 
-def run(sentence_path, sheet_name, model_name, number_of_features):
+def run(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_female, model_name, number_of_features):
     han, hun = extract_sentences(filename=sentence_path, sheetname=sheet_name)
 
-    texts_han = ['han'] + han
-    texts_hun = ['hun'] + hun
+    texts_han = [gender_word_pair_male] + han
+    texts_hun = [gender_word_pair_female] + hun
 
     # Loading the pre-trained BERT model
     ###################################
@@ -220,8 +220,8 @@ def run(sentence_path, sheet_name, model_name, number_of_features):
     tokenizer = BertTokenizer.from_pretrained(model_name)
 
 
-    han_embeddings = make_numpy(get_embeddings_from_text(texts_han, 'han', model, tokenizer)).transpose()
-    hun_embeddings = make_numpy(get_embeddings_from_text(texts_hun, 'hun', model, tokenizer)).transpose()
+    han_embeddings = make_numpy(get_embeddings_from_text(texts_han, gender_word_pair_male, model, tokenizer)).transpose()
+    hun_embeddings = make_numpy(get_embeddings_from_text(texts_hun, gender_word_pair_female, model, tokenizer)).transpose()
 
     diff_embeddings = han_embeddings-hun_embeddings
     #print('Diff embedding: ', diff_embeddings)
@@ -246,9 +246,18 @@ if __name__ == '__main__':
 
     sentence_path = 'experiments\pca\sample_sentences.xlsx'
     sheet_name = 'hun_han_alle'
-    model_name = NorBERT
+    gender_word_pair_male = 'han'
+    gender_word_pair_female = 'hun'
+
+    model_name = mBERT
     number_of_features = 10
 
-    run(sentence_path=sentence_path, sheet_name=sheet_name, model_name=model_name, number_of_features=number_of_features)
+    run(
+        sentence_path=sentence_path, 
+        sheet_name=sheet_name, 
+        gender_word_pair_male=gender_word_pair_male, 
+        gender_word_pair_female=gender_word_pair_female, 
+        model_name=model_name, 
+        number_of_features=number_of_features)
 
     
