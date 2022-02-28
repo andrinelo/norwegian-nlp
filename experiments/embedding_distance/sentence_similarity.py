@@ -222,6 +222,9 @@ def cosine_similarity(sentence1, sentence2, model):
 
 if __name__ == '__main__':
 
+    #TODO Nå er status at man kan finne embeddings til en setning, og man kan sammenlikne cosine similarity mellom flere setningers embeddings. 
+    # Neste steg er å finne ut hvilke setninger vi vil sammenlikne eller hvordan vi faktisk skal gjøre en sånn sammenlikning. Avventer til det er avklart.
+
     NorBERT = 'ltgoslo/norbert'
     NB_BERT = 'NbAiLab/nb-bert-base'
     mBERT = 'bert-base-multilingual-cased'

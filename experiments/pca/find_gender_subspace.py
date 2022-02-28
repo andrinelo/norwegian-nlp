@@ -113,13 +113,12 @@ def get_embeddings_from_text(texts, gender_word, model, tokenizer):
 
 
         target_word_embeddings.append(word_embedding) #= embeddings for "bank" i kontekst av de ulike setningene
-    #print(target_word_embeddings)
-    return target_word_embeddings
+    print('{} x {}'.format(len(target_word_embeddings), len(target_word_embeddings[0])))
+    return make_numpy(target_word_embeddings)
 
 
 #get average vector of "han". switch row and cols to sum each colums and take average
-"""
-def get_average(target_word_embeddings, han_hun): 
+def get_average(target_word_embeddings, word): 
     switch_rows_and_cols_vector = [[] for i in range(len(target_word_embeddings[0]))]
 
     for number_index in range(len(target_word_embeddings[0])):
@@ -132,9 +131,9 @@ def get_average(target_word_embeddings, han_hun):
         npArray = np.array(row)
         avg = np.average(npArray)
         avg_vector.append(avg)
-    print('Average vector for ', han_hun, ':', avg_vector)
-    return avg_vector
-"""
+    print('Average vector for ', word, ':', avg_vector[:10])
+    return make_numpy(avg_vector)
+
 
 def make_numpy(vector): 
     return np.array(vector)
@@ -224,23 +223,40 @@ def run(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_femal
     # This is the same tokenizer that
     # was used in the model to generate
     # embeddings to ensure consistency
-    tokenizer = BertTokenizer.from_pretrained(model_name)
+    tokenizer = BertTokenizer.from_pretrained('ltgoslo/norbert')
 
-    hun_embeddings = make_numpy(get_embeddings_from_text(texts_hun, gender_word_pair_female, model, tokenizer)).transpose()
-    han_embeddings = make_numpy(get_embeddings_from_text(texts_han, gender_word_pair_male, model, tokenizer)).transpose()
 
-    diff_embeddings = han_embeddings-hun_embeddings
-    #print('Diff embedding: ', diff_embeddings)
+    #TODO Er veldig usikker på om output her skal være .transposed() eller ikke, altså hva som er rader og hva som er kolonner i embeddingsene
+    # Se på data frame outputten for å se om den skal transposes...? 
 
-    if model_name == 'ltgoslo/norbert': 
-        gutt, jente = extract_sentences(filename=sentence_path, sheetname='jente_gutt_tilfeldig')
-        texts_hun = ['jente'] + hun
-        texts_han = ['gutt'] + han
-        jente_embeddings = make_numpy(get_embeddings_from_text(texts_hun, 'jente', model, tokenizer)).transpose()
-        gutt_embeddings = make_numpy(get_embeddings_from_text(texts_han, 'gutt', model, tokenizer)).transpose()
-        diff_embeddings = (han_embeddings-hun_embeddings) + (gutt_embeddings-jente_embeddings)
+    #TODO I tillegg så får jeg ikke til å slå sammen for hun/han og jente/gutt pga strl. på matrisen (antall setninger). 
+    # Fikk ikke fikset det problemet uten å fikse problemet over, så må se senere om det er noe å få gjort med det.
+
+    hun_embeddings = get_embeddings_from_text(texts_hun, gender_word_pair_female, model, tokenizer)
+    han_embeddings = get_embeddings_from_text(texts_han, gender_word_pair_male, model, tokenizer)
+
+    #avg_hun = get_average(hun_embeddings, "hun")
+    #avg_han = get_average(han_embeddings, "han")
+
+    diff_embeddings = han_embeddings - hun_embeddings
+    print('Diff embedding: ', diff_embeddings)
+    emb_feat_dF = get_feat_dF(diff_embeddings)
+    print(emb_feat_dF)
+
+   
+    """
+    gutt, jente = extract_sentences(filename=sentence_path, sheetname='jente_gutt_tilfeldig')
+    texts_jente = ['jente'] + jente
+    texts_gutt = ['gutt'] + gutt
+    jente_embeddings = get_embeddings_from_text(texts_jente, 'jente', model, tokenizer)
+    gutt_embeddings = get_embeddings_from_text(texts_gutt, 'gutt', model, tokenizer)
+
+    diff_embeddings = (avg_han-avg_hun) + (avg_gutt-avg_jente)
+
+    print(diff_embeddings)
 
     emb_feat_dF = get_feat_dF(diff_embeddings)
+    """
 
     pca_emb = get_pca_emb(emb_feat_dF, number_of_features)
 
@@ -268,16 +284,20 @@ if __name__ == '__main__':
     number_of_features = 10
     
     
-    sheet_name_list = ['hun_han_alle']
-    gender_word_pair_male='han'
-    gender_word_pair_female='hun'
+    sheet_name_list = ['hun_han_alle', 'jente_gutt_tilfeldig']
     
     for sheet in sheet_name_list: 
         sheet_name = sheet
+        if sheet_name == 'hun_han_alle':
+            gender_word_pair_male='han'
+            gender_word_pair_female='hun'
+        if sheet_name == 'jente_gutt_tilfeldig':
+            gender_word_pair_male='gutt'
+            gender_word_pair_female='jente'
         for model in models_list:
             model_name = model
             
-            plot_to_filename = 'experiments\pca\plots\{}_{}_features.png'.format(name[models_list.index(model_name)], str(number_of_features))
+            plot_to_filename = 'experiments\pca\plots\{}_{}.png'.format(name[models_list.index(model_name)], sheet_name)
 
             print('Running {} sheet with {} and target words {} and {}'.format(sheet_name, model_name, gender_word_pair_male, gender_word_pair_female))
             run(
@@ -308,6 +328,3 @@ if __name__ == '__main__':
                 number_of_features=number_of_features, 
                 plot_to_filename=plot_to_filename)
     """     
-    
-
-    
