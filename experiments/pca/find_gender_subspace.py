@@ -2,6 +2,9 @@ from tkinter import N
 from transformers import pipeline
 
 from transformers import BertTokenizer, BertModel
+from transformers import logging
+logging.set_verbosity_error()
+
 import matplotlib.pyplot as plt 
 import numpy as np
 import pandas as pd
@@ -97,7 +100,7 @@ def get_embeddings_from_text(texts, gender_word, model, tokenizer):
     for text in texts:
         tokenized_text, tokens_tensor, segments_tensors = bert_text_preparation(text, tokenizer)
 
-        print('====', tokenized_text, '=======')
+        #print('====', tokenized_text, '=======')
 
         list_token_embeddings = get_bert_embeddings(tokens_tensor, segments_tensors, model)
 
@@ -156,7 +159,7 @@ def get_feat_dF(embeddings):
     #create data frame with features
     emb_feat_cols = ['feature'+str(i) for i in range(embeddings_standarized.shape[1])]
     emb_feat_dF = pd.DataFrame(embeddings_standarized, columns=emb_feat_cols)
-    print(emb_feat_dF)
+    #print(emb_feat_dF)
 
     return emb_feat_dF
 
@@ -274,7 +277,7 @@ if __name__ == '__main__':
         for model in models_list:
             model_name = model
             
-            plot_to_filename = 'experiments\pca\plots\{}_{}.png'.format(name[models_list.index(model_name)], str(number_of_features))
+            plot_to_filename = 'experiments\pca\plots\{}_{}_features.png'.format(name[models_list.index(model_name)], str(number_of_features))
 
             print('Running {} sheet with {} and target words {} and {}'.format(sheet_name, model_name, gender_word_pair_male, gender_word_pair_female))
             run(
