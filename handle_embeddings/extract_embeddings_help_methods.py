@@ -1,3 +1,5 @@
+from ftplib import all_errors
+from statistics import mean
 import torch
 from transformers import BertTokenizer, BertModel
 from scipy.spatial.distance import cosine
@@ -26,16 +28,18 @@ def tokenize_text(sentence, model):
     tokenized_text = tokenizer.tokenize(marked_text)
 
     #create mapping from word to vector
+    """
     for i, token_str in enumerate(tokenized_text):
         print(i, token_str)
-
+    """
     # Map the token strings to their vocabulary indeces.
     indexed_tokens = tokenizer.convert_tokens_to_ids(tokenized_text)
 
     # Display the words with their indeces.
+    """
     for tup in zip(tokenized_text, indexed_tokens):
         print('{:<12} {:>6,}'.format(tup[0], tup[1]))
-
+    """
     # Mark each of the tokens as belonging to sentence sentence 0, sentence 1 or so.
     segments_ids = []
     id_counter = 0
@@ -45,8 +49,6 @@ def tokenize_text(sentence, model):
             id_counter += 1
 
     #segments_ids = [1] * len(tokenized_text)
-
-    print('segments IDs:', segments_ids)
 
 
     # Convert inputs to PyTorch tensors
@@ -78,6 +80,7 @@ def get_emb_hidden_states(tokens_tensor, segments_tensors, model):
         # https://huggingface.co/transformers/model_doc/bert.html#bertmodel
         hidden_states = outputs[2]
 
+    """
     print ("Number of layers:", len(hidden_states), "  (initial embeddings + 12 BERT layers)")
     layer_i = 0
 
@@ -94,24 +97,17 @@ def get_emb_hidden_states(tokens_tensor, segments_tensors, model):
 
     # Each layer in the list is a torch tensor.
     print('Tensor shape for each layer: ', hidden_states[0].size())
-
+    """
 
     # Concatenate the tensors for all layers. We use `stack` here to
     # create a new dimension in the tensor.
     token_embeddings = torch.stack(hidden_states, dim=0)
 
-    print(token_embeddings.size())
-
-
     # Remove dimension 1, the "batches".
     token_embeddings = torch.squeeze(token_embeddings, dim=1)
 
-    print(token_embeddings.size())
-
     # Swap dimensions 0 and 1.
     token_embeddings = token_embeddings.permute(1,0,2)
-
-    print(token_embeddings.size())
 
     return token_embeddings, hidden_states
 
@@ -133,8 +129,9 @@ def convert_all_token_embeddings_to_token_vectors(token_embeddings):
         # Use `sum_vec` to represent `token`.
         token_vectors.append(sum_vec)
 
-    print ('Shape is: %d x %d' % (len(token_vectors), len(token_vectors[0])))
-    return token_vectors
+    torch_emb = torch.stack(token_vectors, dim=0)
+    #print ("Our final sentence embedding vector of shape:", torch_emb.size())
+    return torch_emb
 
 
 def create_sentence_embedding_from_hidden_sates(hidden_states):
@@ -145,33 +142,40 @@ def create_sentence_embedding_from_hidden_sates(hidden_states):
     # Calculate the average of all 22 token vectors.
     sentence_embedding = torch.mean(token_vecs, dim=0)
 
-    print ("Our final sentence embedding vector of shape:", sentence_embedding.size())
+    #print ("Our final sentence embedding vector of shape:", sentence_embedding.size())
     #print("Sentence embedding: ", sentence_embedding)
     return sentence_embedding 
 
 
-def create_embeddings_for_all_representations_of_a_word(token_embeddings, tokenized_text, word): 
-    list_token_embeddings = [token_embed.tolist() for token_embed in token_embeddings]
+def create_embedding_for_specific_word_single_mention(token_embeddings, tokenized_text, word): 
+    vec = convert_all_token_embeddings_to_token_vectors(token_embeddings)
+
+    # Find the position of gendered word in in list of tokens
+    word_index = tokenized_text.index(word) # = dét ordet som er i alle setningne i form av ulike kontekster
+    # Get the embedding for bank
+    #word_embedding = list_token_embeddings[word_index]
+    
+    word_embedding = vec[word_index]
+    return word_embedding
+
+def create_embeddings_for_all_representations_of_a_word_multiple_mentions(token_embeddings, tokenized_text, word): 
+    vec = convert_all_token_embeddings_to_token_vectors(token_embeddings)
     # Getting embeddings for the target word in all given contexts
     target_word_embeddings = []
-    #print('Tokenized text: ', tokenized_text)
-    
+        
     for w in tokenized_text: 
-        if w == word: 
+        if w.replace('.', '') == word: 
             # Find the position of gendered word in in list of tokens
             word_index = tokenized_text.index(word) # = dét ordet som er i alle setningne i form av ulike kontekster
             # Get the embedding for bank
-            word_embedding = list_token_embeddings[word_index]
+            word_embedding = vec[word_index]
 
             target_word_embeddings.append(word_embedding) #= embeddings for "bank" i kontekst av de ulike setningene
-    print('{} x {}'.format(len(target_word_embeddings), len(target_word_embeddings[0])))
     
-    torch_emb = torch.Tensor(target_word_embeddings)
-    print('Size of torch emb: ', torch_emb.size())
+    torch_emb = torch.stack(target_word_embeddings, dim=0)
+    #print ("Our final sentence embedding vector of shape:",  torch_emb.size())
 
     return torch_emb
-
-
 
 def cosine_similarity(embedding1, embedding2): 
 
@@ -197,6 +201,7 @@ def extract_total_embedding_from_text(text, model):
     tokenized_text, tokens_tensor, segments_tensors = tokenize_text(text, model)
     token_embeddings, hidden_states = get_emb_hidden_states(tokens_tensor, segments_tensors, model)
     sentence_embedding = create_sentence_embedding_from_hidden_sates(hidden_states)
+    print('Final size of total sentence embedding from text: ', sentence_embedding.size())
     return sentence_embedding
 
 # Extract the embeddings for all words in a sentence
@@ -205,67 +210,95 @@ def extract_word_embeddings_for_all_tokens_from_text(text, model):
     token_embeddings, hidden_states = get_emb_hidden_states(tokens_tensor, segments_tensors, model)
 
     token_vectors = convert_all_token_embeddings_to_token_vectors(token_embeddings)
+    print('Final size of embedding for all tokens in a text: ', token_vectors.size())
     return token_vectors
 
-# Extract the embedding for a specific word in a sentence
-def extract_all_embeddings_for_specific_word_from_text(text, model, word): 
+def extract_embedding_for_specific_word_in_text_single_mention(text, model, word): 
     tokenized_text, tokens_tensor, segments_tensors = tokenize_text(text, model)
     token_embeddings, hidden_states = get_emb_hidden_states(tokens_tensor, segments_tensors, model)
-
-    target_word_embeddings = create_embeddings_for_all_representations_of_a_word(token_embeddings, tokenized_text, word)
-
-    return target_word_embeddings #returns a torch embeddings from different representations of the word
-
-# Extract the average word embedding of a specific word from a set of embeddings
-def extract_average_word_embedding_for_specific_word_from_text(text, model, word):
+    emb = create_embedding_for_specific_word_single_mention(token_embeddings, tokenized_text, word)
     
-    all_embedding_representations = extract_all_embeddings_for_specific_word_from_text(text, model, word)
-    mean_emb = torch.mean(all_embedding_representations, dim=0)
-    print('Mean: ', mean_emb.size())
-    return mean_emb
+    print('Final size of embedding for specific word in text with single mention: ', emb.size())
+    return emb
 
-
-# Extract all versions of word embeddings for a specific word from a set of different sentence representations
-def extract_all_versions_of_a_word_embedding_from_set_of_sentences(list_of_sentences, model, word): 
-    all_embedding_representations = []
+def extract_all_embeddings_for_specific_word_in_text_multiple_mentions(text_with_multiple_mentions, model, word): 
+    tokenized_text, tokens_tensor, segments_tensors = tokenize_text(text_with_multiple_mentions, model)
+    token_embeddings, hidden_states = get_emb_hidden_states(tokens_tensor, segments_tensors, model)
     
-    for sentence in list_of_sentences: 
-        all_embedding_representations.append(emb for emb in extract_all_embeddings_for_specific_word_from_text(sentence, model, word))
-
+    all_embedding_representations = create_embeddings_for_all_representations_of_a_word_multiple_mentions(token_embeddings, tokenized_text, word)
+    print('Final size of embedding for specific word in text with multiple mentions: ', all_embedding_representations.size())
     return all_embedding_representations
 
+# Extract the average word embedding of a specific word from a text og list of texts that has multiple mentions in EACH
+def extract_average_embedding_for_specific_word_multiple_mentions_in_sentence(text_with_multiple_mentions, model, word):
+    tokenized_text, tokens_tensor, segments_tensors = tokenize_text(text_with_multiple_mentions, model)
+    token_embeddings, hidden_states = get_emb_hidden_states(tokens_tensor, segments_tensors, model)
+    
+    all_embedding_representations = create_embeddings_for_all_representations_of_a_word_multiple_mentions(token_embeddings, tokenized_text, word)
+    mean_emb = torch.mean(all_embedding_representations, dim=0)
+    
+    print('Final size of mean embedding for specific word with multiple mentions: ', mean_emb.size())
+    return mean_emb
 
+#To use for finding "hun" and "han" in PCA
+def extract_average_embedding_for_specific_word_in_multiple_sentences(list_of_sentences, model, word):
+    
+    all_embedding_representations = []
+    for sentence in list_of_sentences: 
+        tokenized_text, tokens_tensor, segments_tensors = tokenize_text(sentence, model)
+        token_embeddings, hidden_states = get_emb_hidden_states(tokens_tensor, segments_tensors, model)
+        
+        emb = create_embedding_for_specific_word_single_mention(token_embeddings, tokenized_text, word)
+        all_embedding_representations.append(emb)
+    
+    torch_emb = torch.stack(all_embedding_representations, dim=0)
+        
+    mean_emb = torch.mean(torch_emb, dim=0)
+    print('Final size of mean embedding for specific word with single mention in multiple sentences: ', mean_emb.size())
 
+    return mean_emb
 
-# Extract the average word embedding of a specific word from a set of different sentence representations
-def extract_average_word_embedding_from_set_of_sentences(list_of_sentences, model, word):
-    return
+def cosine_similarity(embedding1, embedding2): 
 
+    cosine_similarity = 1 - cosine(embedding1, embedding2)
+    #sim = 1 - cosine(sentence_embedding1, sentence_embedding1)
 
-def calculate_cosine_similarity(text1, text2, model): 
+    #print('Sim: ', sim)
+    #print('Cosine similarity between "{}" and "{}": {}'.format(sentence1, sentence2, cosine_similarity))
 
-    embedding1 = extract_total_embedding_from_text(text1, model)
-    embedding2 = extract_total_embedding_from_text(text1, model)
-
-    cos = cosine_similarity(embedding1, embedding2)
-
-    print('Cosine similarity: ', cos)
-    return cos
+    return cosine_similarity
 
 
 if __name__ == '__main__': 
 
     model = 'ltgoslo/norbert'
-    text = 'gir du meg bank så gir jeg deg bank også før noen andre gir deg bank.'
-    list_of_sentences = ["jeg er en jente.", 'en jente er snill.']
+    text_single = "ikke gi meg bank."
+    text_multiple = 'gir du meg bank så gir jeg deg bank også før noen andre gir deg bank.'
+    list_of_sentences = ["jeg er en jente jeg.", 'en snill jente faktisk.', 'jeg ser en jente.']
 
-    #emb = extract_all_word_embeddings_for_specific_word_from_text(text, model, "bank")
+ 
+    emb_total = extract_total_embedding_from_text(text_single, model)
 
-    #emb = extract_all_embeddings_for_specific_word_from_text(text, model, 'bank')
-    #mean = extract_average_word_embedding_for_specific_word_from_text(text, model, "bank")
+    
+    emb_all = extract_word_embeddings_for_all_tokens_from_text(text_single, model)
 
-    text1 = 'jeg er kul.'
-    text2 = 'jeg er kul.'
-    cos = calculate_cosine_similarity(text1, text2, model)
+    emb_word = extract_embedding_for_specific_word_in_text_single_mention(text_single, model, 'bank')
+    emb_word2 = extract_all_embeddings_for_specific_word_in_text_multiple_mentions(text_multiple, model, 'bank')
 
-    #extract_average_word_embedding_from_set_of_sentences(list_of_sentences, model, "jente")
+    emb_avg = extract_average_embedding_for_specific_word_in_multiple_sentences(list_of_sentences, model, 'jente')
+    emb_avg2 = extract_average_embedding_for_specific_word_multiple_mentions_in_sentence(text_multiple, model, 'bank')
+
+
+    cos1 = cosine_similarity(emb_total, emb_total)
+    cos2 = cosine_similarity(emb_all[0], emb_all[0])
+    cos3 = cosine_similarity(emb_all[0], emb_word2[0])
+
+    cos4 = cosine_similarity(emb_word, emb_avg)
+    cos5 = cosine_similarity(emb_avg2, emb_avg)
+  
+
+    print('Cos = 1: ', cos1)
+    print('Cos = 1: ', cos2)
+    print('Cos =/= 1: ', cos3)
+    print('Cos =/= 1: ', cos4)
+    print('Cos =/= 1: ', cos5)
