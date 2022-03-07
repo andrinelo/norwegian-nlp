@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 def tokenize_text(sentence, model): 
     # Load pre-trained model tokenizer (vocabulary)
-    tokenizer = BertTokenizer.from_pretrained(model)
+    tokenizer = BertTokenizer.from_pretrained('ltgoslo/norbert')
 
     seperated_sentence = sentence.replace('.', '.[SEP]')
 
@@ -150,12 +150,22 @@ def create_sentence_embedding_from_hidden_sates(hidden_states):
 def create_embedding_for_specific_word_single_mention(token_embeddings, tokenized_text, word): 
     vec = convert_all_token_embeddings_to_token_vectors(token_embeddings)
 
+    for w in tokenized_text: 
+        if w.replace('.', '').lower() == word: 
+            # Find the position of gendered word in in list of tokens
+            word_index = tokenized_text.index(w) # = dét ordet som er i alle setningne i form av ulike kontekster
+            # Get the embedding for bank
+            word_embedding = vec[word_index]
+
+    """
     # Find the position of gendered word in in list of tokens
     word_index = tokenized_text.index(word) # = dét ordet som er i alle setningne i form av ulike kontekster
     # Get the embedding for bank
     #word_embedding = list_token_embeddings[word_index]
     
     word_embedding = vec[word_index]
+    """
+
     return word_embedding
 
 def create_embeddings_for_all_representations_of_a_word_multiple_mentions(token_embeddings, tokenized_text, word): 
@@ -166,7 +176,7 @@ def create_embeddings_for_all_representations_of_a_word_multiple_mentions(token_
     for w in tokenized_text: 
         if w.replace('.', '') == word: 
             # Find the position of gendered word in in list of tokens
-            word_index = tokenized_text.index(word) # = dét ordet som er i alle setningne i form av ulike kontekster
+            word_index = tokenized_text.index(w) # = dét ordet som er i alle setningne i form av ulike kontekster
             # Get the embedding for bank
             word_embedding = vec[word_index]
 

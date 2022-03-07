@@ -45,6 +45,23 @@ def extract_average_embedding_for_specific_word_multiple_mentions_in_sentence(te
     return mean_emb
 
 #To use for finding "hun" and "han" in PCA
+def extract_all_embeddings_for_specific_word_in_multiple_sentences(list_of_sentences, model, word):
+    
+    all_embedding_representations = []
+    for sentence in list_of_sentences: 
+        print('Sentence: ', sentence)
+        tokenized_text, tokens_tensor, segments_tensors = tokenize_text(sentence, model)
+        token_embeddings, hidden_states = get_emb_hidden_states(tokens_tensor, segments_tensors, model)
+        
+        emb = create_embedding_for_specific_word_single_mention(token_embeddings, tokenized_text, word)
+        all_embedding_representations.append(emb)
+    
+    torch_emb = torch.stack(all_embedding_representations, dim=0)
+        
+    print('Final size of all embeddings for specific word with single mention in multiple sentences: ', torch_emb.size())
+
+    return torch_emb
+
 def extract_average_embedding_for_specific_word_in_multiple_sentences(list_of_sentences, model, word):
     
     all_embedding_representations = []
@@ -80,7 +97,8 @@ if __name__ == '__main__':
     text_multiple = 'gir du meg bank så gir jeg deg bank også før noen andre gir deg bank.'
     list_of_sentences = ["jeg er en jente jeg.", 'en snill jente faktisk.', 'jeg ser en jente.']
 
- 
+    #Testing methods
+    """
     emb_total = extract_total_embedding_from_text(text_single, model)
 
     
@@ -106,3 +124,4 @@ if __name__ == '__main__':
     print('Cos =/= 1: ', cos3)
     print('Cos =/= 1: ', cos4)
     print('Cos =/= 1: ', cos5)
+    """
