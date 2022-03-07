@@ -13,9 +13,11 @@ import torch
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-#TODO import .handle_embeddings.extract_embeddings here
+# from ..handle_embeddings import extract_embeddings
 
-
+import sys
+sys.path.insert(1, 'experiments/handle_embeddings')
+from extract_embeddings import *
 
 def get_feat_dF(embeddings): 
     # normalizing the features
@@ -90,14 +92,14 @@ def run(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_femal
     ###################################
     # Embeddings will be derived from
     # the outputs of this model
-    model = BertModel.from_pretrained(model_name, output_hidden_states = True,)
+    model = BertModel.from_pretrained(model_name, output_hidden_states = True)
 
     # Setting up the tokenizer
     ###################################
     # This is the same tokenizer that
     # was used in the model to generate
     # embeddings to ensure consistency
-    tokenizer = BertTokenizer.from_pretrained('ltgoslo/norbert')
+    tokenizer = BertTokenizer.from_pretrained('ltgoslo/norbert') #TODO sendes ikke inn i extract embeddings
 
 
     #TODO Er veldig usikker på om output her skal være .transposed() eller ikke, altså hva som er rader og hva som er kolonner i embeddingsene
@@ -109,7 +111,7 @@ def run(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_femal
     hun_embeddings = extract_average_embedding_for_specific_word_in_multiple_sentences(hun_sentences, model, gender_word_pair_female)
     han_embeddings = extract_average_embedding_for_specific_word_in_multiple_sentences(han_sentences, model, gender_word_pair_male)
 
-    diff_embeddings = han_embeddings - hun_embeddings
+    diff_embeddings = han_embeddings - hun_embeddings 
     print('Diff embedding: ', diff_embeddings)
     emb_feat_dF = get_feat_dF(diff_embeddings)
     print(emb_feat_dF)
