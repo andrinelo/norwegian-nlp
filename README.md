@@ -42,9 +42,9 @@ This is the result for the count of the gendered words "mann", "kvinne", "gutt",
 ## Principal Component Analysis of NorBERT, NB-BERT and mBERT
 The sentences used can be found in experiments/pca/sample_sentences.xlsx and can be changed to other sentences/target words on the same format. 
 To analyze (plot) the principal componants: 
-1. Fill inn for wanted variables in __main__ function in experiments/pca/find_gender_subspace.py 
-2. Run xperiments/pca/find_gender_subspace.py
+1. Fill inn for wanted variables in __main__ function in experiments/pca/find_principal_components.py 
+2. Run xperiments/pca/find_principal_components.py 
 3. Plots will be saved in experiments/pca/plots/
 
 Example of plot: Top 10 principal components from 'han', 'hun', 'jente' and 'gutt' in NorBERT embeddings calculated from sentences in sheet 'hun_han_alle' and 'jente_gutt_tilfeldig'
-![plot](experiments/pca/plots/NorBERT_10.png)
+![plot](experiments/pca/plots/NorBERT.png)
