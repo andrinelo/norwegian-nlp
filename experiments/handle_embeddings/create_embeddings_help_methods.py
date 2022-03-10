@@ -109,7 +109,8 @@ def get_emb_hidden_states(tokens_tensor, segments_tensors, model):
     # Swap dimensions 0 and 1.
     token_embeddings = token_embeddings.permute(1,0,2)
 
-    return token_embeddings, hidden_states
+    return hidden_states
+
 
 def convert_all_token_embeddings_to_token_vectors(token_embeddings): 
      # Stores the token vectors, with shape [22 x 768]
@@ -146,9 +147,13 @@ def create_sentence_embedding_from_hidden_sates(hidden_states):
     #print("Sentence embedding: ", sentence_embedding)
     return sentence_embedding 
 
+def create_word_embedding_from_hidden_states(hidden_states): 
+    return hidden_states[-2][0]
 
-def create_embedding_for_specific_word_single_mention(token_embeddings, tokenized_text, word): 
-    vec = convert_all_token_embeddings_to_token_vectors(token_embeddings)
+def create_embedding_for_specific_word_single_mention(vec, tokenized_text, word):
+    #vec = convert_all_token_embeddings_to_token_vectors(token_embeddings)
+
+    word_embedding = None
 
     for w in tokenized_text: 
         if w.replace('.', '').lower() == word: 
@@ -157,19 +162,11 @@ def create_embedding_for_specific_word_single_mention(token_embeddings, tokenize
             # Get the embedding for bank
             word_embedding = vec[word_index]
 
-    """
-    # Find the position of gendered word in in list of tokens
-    word_index = tokenized_text.index(word) # = dét ordet som er i alle setningne i form av ulike kontekster
-    # Get the embedding for bank
-    #word_embedding = list_token_embeddings[word_index]
-    
-    word_embedding = vec[word_index]
-    """
-
     return word_embedding
 
-def create_embeddings_for_all_representations_of_a_word_multiple_mentions(token_embeddings, tokenized_text, word): 
-    vec = convert_all_token_embeddings_to_token_vectors(token_embeddings)
+def create_embeddings_for_all_representations_of_a_word_multiple_mentions(vec, tokenized_text, word): 
+    #vec = convert_all_token_embeddings_to_token_vectors(token_embeddings)
+    
     # Getting embeddings for the target word in all given contexts
     target_word_embeddings = []
         
@@ -179,9 +176,12 @@ def create_embeddings_for_all_representations_of_a_word_multiple_mentions(token_
             word_index = tokenized_text.index(w) # = dét ordet som er i alle setningne i form av ulike kontekster
             # Get the embedding for bank
             word_embedding = vec[word_index]
-
+            
             target_word_embeddings.append(word_embedding) #= embeddings for "bank" i kontekst av de ulike setningene
     
+    if len(target_word_embeddings) == 0: 
+        return None
+
     torch_emb = torch.stack(target_word_embeddings, dim=0)
     #print ("Our final sentence embedding vector of shape:",  torch_emb.size())
 
