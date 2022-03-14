@@ -158,9 +158,9 @@ if __name__ == '__main__':
     """ 
     Save the results to CSV files
     """
-    # df.to_csv("hanna_hans_analyze.csv")
-    # pie_frame_positive.to_csv("who_is_more_positive.csv")
-    # pie_frame_negative.to_csv("who_is_more_negative.csv")
+    df.to_csv("hanna_hans_analyze.csv")
+    pie_frame_positive.to_csv("who_is_more_positive.csv")
+    pie_frame_negative.to_csv("who_is_more_negative.csv")
 
     """
     Should extend to include arguments that run the program on perfered BERT model
