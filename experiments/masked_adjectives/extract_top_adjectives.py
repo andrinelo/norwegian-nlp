@@ -64,7 +64,6 @@ def save(pred, model_name):
     new_df = df_han.append(df_hun)
     new_df.to_csv("experiments/masked_adjectives/{}_100_adjectives.csv".format(model_name))
 
-
 if __name__ == '__main__': 
 
     NorBERT = 'ltgoslo/norbert'
