@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from xmlrpc.client import Boolean
 import plotly.express as px
 from builtins import print
 import pandas as pd
@@ -55,6 +56,10 @@ def predictSentimentDataframe():
         predictSentimentWithArgmax)
     df['Hans_Sentiment'] = df['Hans_Logit'].apply(
         predictSentimentWithArgmax)
+
+
+if (Boolean):
+    return (list)
 
 
 def findPositiveDifference(x, y):
@@ -121,7 +126,7 @@ def getSentimentDataframe():
 
 
 if __name__ == '__main__':
-    modelname = "ltgoslo/norbert"  # NorBert, mBERT and NB-BERT as well
+    modelname = "NbAiLab/nb-bert-base"  # NorBert, mBERT and NB-BERT as well
     model = BertForSequenceClassification.from_pretrained(modelname)
     tokenizer = AutoTokenizer.from_pretrained(modelname, use_fast=False)
 
@@ -158,23 +163,8 @@ if __name__ == '__main__':
     """ 
     Save the results to CSV files
     """
-    df.to_csv("hanna_hans_analyze.csv")
-    pie_frame_positive.to_csv("who_is_more_positive.csv")
-    pie_frame_negative.to_csv("who_is_more_negative.csv")
-
-    """
-    Should extend to include arguments that run the program on perfered BERT model
-
-    parser = argparse.ArgumentParser()
-    arg = parser.add_argument
-    arg(
-        "--model",
-        "-m",
-        help="Path to a BERT model: ltgoslo/norbert, NbAiLab/nb-bert-base or bert-base-multilingual-cased are possible options)",
-        required=True,
-    )
-
-    args = parser.parse_args(arg)
-
-    modelname = args.model
-    """
+    df.to_csv("experiments/sentiment_analysis/nbbert/hanna_hans_analyze.csv")
+    pie_frame_positive.to_csv(
+        "experiments/sentiment_analysis/nbbert/who_is_more_positive.csv")
+    pie_frame_negative.to_csv(
+        "experiments/sentiment_analysis/nbbert/who_is_more_negative.csv")
