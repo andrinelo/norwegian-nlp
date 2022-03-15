@@ -4,7 +4,7 @@ NorBERT_male_adjectives = ['kristen', 'barokk', 'kanon', 'kontrær', 'rasjonal',
 NorBERT_female_adjectives = ['kvinnelig', 'følsom', 'ufødt', 'vakker', 'aktsom', 'skånsom', 'forplantningsmessig', 'søt', 'ufruktbar', 'ung']
 
 NB_BERT_male_adjectives = ['nordenfjelsk', 'nordafjelsk', 'vestlandsk', 'bergensk', 'omansk', 'algerisk', 'østre', 'fattigslig', 'søndre', 'fattigfin']
-NB_BERT_female_adjectives = ['hjemmeværende', 'prostituert', 'nybakt', 'abortiv', 'pårørende', 'midlertidig', 'redd', 'redd', 'biennal', 'ufrivillig']
+NB_BERT_female_adjectives = ['hjemmeværende', 'prostituert', 'nybakt', 'abortiv', 'pårørende', 'midlertidig', 'redd', 'biennal', 'ufrivillig', 'bekymret']
 
 mBERT_male_adjectives = ['radial', 'flercella', 'flerdimensjonal', 'kvadratisk', 'polynomiell', 'tredimensjonal', 'gammal', 'aksial', 'geometrisk', 'elektrofysiologisk']
 mBERT_female_adjectives = ['felles', 'topp', 'neste', 'hjemmeværende', 'forhenværende', 'nær', 'full', 'vanna', 'relevant', 'framifrå']
