@@ -57,6 +57,7 @@ Compare distance between Hanna and Hans descriptions and questions from survey.
 2. Change input variable True/False in run() in __main__ to differ between sentence embedding and han/hun embedding for texts. 
 
 Example of plot: Difference (male-female) distance from sentence embeddings of survey questions to sentence embeddings from text
+
 ![plot](experiments/hanna_og_hans/diff_plot_Sentence_Embeddings.png)
 
 ## Masked language modelling 
@@ -66,6 +67,7 @@ Extract top gendered adjectives from Norwegian language models.
 3. run experiments/masked_adjectives/plot_adjectives.py to get word cloud of top adjectives for all models 
 
 Example of plot: Top female biased adjectives from NorBERT
+
 ![plot](experiments/masked_adjectives/word_cloud_female_NorBERT.png)
 
 ## Top Adjectives sentiment analysis
