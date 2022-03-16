@@ -2,6 +2,13 @@
 from datasets import load_dataset
 import json
 
+"""
+this pyton scrip 
+* downloads NCC from hugging_face 
+* iterates through all json objects and swappes male words with female words 
+* dumps the new texts in a json file with your name of choice
+"""
+
 def create_swapped_word_mapping(): 
     words_to_be_swapped = ['Han', 'Ham', 'Hans', 'Gutt', 'Gutten', 'Gutter', 'Guttene', 'Mann', 'Menn', 'Mennene', 'Herrene', 'Herrer', 'Herr']
     female_words = ['Hun', 'Hun', 'Hennes', 'Jente', 'Jenta', 'Jenter', 'Jentene', 'Kvinne', 'Kvinner', 'Kvinnene', 'Damene', 'Damer', 'Fru']
