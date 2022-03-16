@@ -34,16 +34,23 @@ def gender_swap_dataset(data, filename, swapped_dict):
 
 if __name__ == '__main__': 
 
-    #TODO generated access token from HuggingFace
-    access_token = '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'
+    """
+    Insert your own generated access token from HuggingFace here
+    """
+    access_token = ''
 
-    #TODO insert filename for gender swapped dataset
-    filename = 'debiasing/fine_tuning_NB_BERT/gender_swapped_dataset.json'
+    """
+    Insert your own path for new json-file with gender swapped json objects
+    """
+    filename = ''
     
 
     swapped_dict = create_swapped_word_mapping()
     training_data = access_NCC(access_token)
 
-    #iterates through the WHOLE training part of the dataset, gender swappes a set of words from swapped_dict 
-    # and dumps the new json object in a file named filename
+    """
+    iterates through the WHOLE training part of the dataset, 
+    gender swappes a set of words from swapped_dict 
+    and dumps the new json object in a file named filename
+    """
     gender_swap_dataset(training_data, filename, swapped_dict)
