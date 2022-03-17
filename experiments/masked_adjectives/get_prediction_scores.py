@@ -42,6 +42,7 @@ if __name__ == '__main__':
         df_han, df_hun = get_data(model_name)
         scores_han = calculate_scores(df_han)
         scores_hun = calculate_scores(df_hun)
+        """
         print('\n', model_name)
         print('Male')
         for key, value in scores_han.items(): 
@@ -49,5 +50,6 @@ if __name__ == '__main__':
         print('Female')
         for key, value in scores_hun.items(): 
             print(key, value)
-        #with open("experiments/masked_adjectives/scores_{}.txt".format(model_name), 'w') as file:
-            #file.write('Male: ' + json.dumps(scores_han) + '\nFemale: ' + json.dumps(scores_hun))
+        """
+        with open("experiments/masked_adjectives/scores_{}.txt".format(model_name), 'w') as file:
+            file.write('Male: ' + json.dumps(scores_han) + '\nFemale: ' + json.dumps(scores_hun))
