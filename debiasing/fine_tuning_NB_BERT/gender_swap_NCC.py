@@ -1,4 +1,3 @@
-
 from nis import match
 from datasets import load_dataset
 import json
@@ -6,10 +5,10 @@ import re
 
 
 """
-this pyton scrip
-* downloads NCC from hugging_face
-* iterates through all json objects and swappes male words with female words
-* dumps the new texts in a json file with your name of choice
+This python script
+downloads NCC from hugging_face
+iterates through all json objects and swaps male words with female words
+dumps the new texts in a json file with your name of choice
 """
 
 
@@ -92,15 +91,14 @@ if __name__ == '__main__':
     """
     Insert your own generated access token from HuggingFace here
     """
-    access_token = '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'
+    access_token = ''
 
     """
     Insert your own path for new json-file with gender swapped json objects
     """
-    filename = 'debiasing/fine_tuning_NB_BERT/gender_swapped_dataset.json'
+    filename = ''
 
     training_data = access_NCC(access_token)
-    # training_data = 'debiasing/fine_tuning_NB_BERT/bugs_test_objects.json'
 
     """
     iterates through the WHOLE training part of the dataset,
