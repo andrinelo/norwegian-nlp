@@ -1,63 +1,111 @@
 
+from nis import match
 from datasets import load_dataset
 import json
+import re
+
 
 """
-this pyton scrip 
-* downloads NCC from hugging_face 
-* iterates through all json objects and swappes male words with female words 
+this pyton scrip
+* downloads NCC from hugging_face
+* iterates through all json objects and swappes male words with female words
 * dumps the new texts in a json file with your name of choice
 """
 
-def create_swapped_word_mapping(): 
-    words_to_be_swapped = ['Han', 'Ham', 'Hans', 'Gutt', 'Gutten', 'Gutter', 'Guttene', 'Mann', 'Menn', 'Mennene', 'Herrene', 'Herrer', 'Herr']
-    female_words = ['Hun', 'Hun', 'Hennes', 'Jente', 'Jenta', 'Jenter', 'Jentene', 'Kvinne', 'Kvinner', 'Kvinnene', 'Damene', 'Damer', 'Fru']
-    
-    swapped_dict = {}
-    for i in range(len(words_to_be_swapped)):
-        swapped_dict[words_to_be_swapped[i]] = female_words[i]
-        swapped_dict[words_to_be_swapped[i].lower()] = female_words[i].lower()
-        swapped_dict[words_to_be_swapped[i].upper()] = female_words[i].upper()
-    return swapped_dict
 
-def access_NCC(access_token): 
-    data = load_dataset('NbAiLab/NCC', streaming=True, use_auth_token=access_token)
-    #use training set only instead of
+def access_NCC(access_token):
+    data = load_dataset('NbAiLab/NCC', streaming=True,
+                        use_auth_token=access_token)
+    # use training set only
     training_data = data['train']
     return training_data
 
-def gender_swap_dataset(data, filename, swapped_dict): 
+
+def swap_pronouns(match):
+    replacements_pronouns = [('Hun', ['Han', 'Ham']), ('Hennes', ['Hans']),
+                             ('Kvinner', ['Menn']), ('Fru', ['Herr'])]
+    d = {w.lower(): repl.lower()
+         for repl, words in replacements_pronouns for w in words}
+    return d[match.group()]
+
+
+def swap_pronouns_capital(match):
+    replacements_pronouns = [('Hun', ['Han', 'Ham']), ('Hennes', ['Hans']),
+                             ('Kvinner', ['Menn']), ('Fru', ['Herr'])]
+    d = {w: repl for repl, words in replacements_pronouns for w in words}
+    return d[match.group()]
+
+
+def swap_gender(match):
+    replacements_gender = [('Hennes', ['Hans']), ('Jente', ['Gutt', 'Gut']), ('Jenta', ['Gutten']), ('Genter', ['Gutter']),
+                           ('Jentene', ['Guttene']), ('Kvinne', ['Mann']), ('Kvinnene', ['Mennene']), ('Damene', ['Herrene']), ('Damer', ['Herrer'])]
+    d_gender = {w.lower(): repl.lower()
+                for repl, words in replacements_gender for w in words}
+    return d_gender[match.group()]
+
+
+def swap_gender_capital(match):
+    replacements_gender = [('Hennes', ['Hans']), ('Jente', ['Gutt', 'Gut']), ('Jenta', ['Gutten']), ('Genter', ['Gutter']),
+                           ('Jentene', ['Guttene']), ('Kvinne', ['Mann']), ('Kvinnene', ['Mennene']), ('Damene', ['Herrene']), ('Damer', ['Herrer'])]
+    d_gender = {w: repl for repl, words in replacements_gender for w in words}
+    return d_gender[match.group()]
+
+
+def gender_swap_dataset(data, filename, pronouns_dict, gender_dict):
+    pronouns = {w.lower(): repl.lower()
+                for repl, words in pronouns_dict for w in words}
+
+    pronouns_capital = {w: repl for repl,
+                        words in pronouns_dict for w in words}
+
+    gender = {w.lower(): repl.lower()
+              for repl, words in gender_dict for w in words}
+
+    gender_capital = {w: repl for repl, words in gender_dict for w in words}
+
     for object in data:
         text = object['text']
 
-        for male_word, female_word in swapped_dict.items(): 
-            swapped_text = text.replace(male_word, female_word)
-            text = swapped_text
-            
-        object['text'] = text
-        
-        with open(filename, 'a') as json_file: 
-            json.dump(object, json_file, indent=4, separators=(',',': '))
+        object['text'] = re.sub('|'.join(r'\b{0}\b'.format(
+            re.escape(k)) for k in pronouns), swap_pronouns, text)
+        object['text'] = re.sub('|'.join(r'\b{0}\b'.format(
+            re.escape(k)) for k in pronouns_capital), swap_pronouns_capital, object['text'])
 
-if __name__ == '__main__': 
+        object['text'] = re.sub('|'.join(r'{0}'.format(
+            re.escape(k)) for k in gender), swap_gender, object['text'])
+
+        object['text'] = re.sub('|'.join(r'{0}'.format(
+            re.escape(k)) for k in gender_capital), swap_gender_capital, object['text'])
+
+        with open(filename, 'a') as json_file:
+            json.dump(object, json_file, indent=4, separators=(',', ': '))
+
+
+if __name__ == '__main__':
+
+    replacements_pronouns = [('Hun', ['Han', 'Ham']), ('Hennes', ['Hans']),
+                             ('Kvinner', ['Menn']), ('Fru', ['Herr'])]
+
+    replacements_gender = [('Hennes', ['Hans']), ('Jente', ['Gutt', 'Gut']), ('Jenta', ['Gutten']), ('Genter', ['Gutter']),
+                           ('Jentene', ['Guttene']), ('Kvinne', ['Mann']), ('Kvinnene', ['Mennene']), ('Damene', ['Herrene']), ('Damer', ['Herrer'])]
 
     """
     Insert your own generated access token from HuggingFace here
     """
-    access_token = ''
+    access_token = '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'
 
     """
     Insert your own path for new json-file with gender swapped json objects
     """
-    filename = ''
-    
+    filename = 'debiasing/fine_tuning_NB_BERT/gender_swapped_dataset.json'
 
-    swapped_dict = create_swapped_word_mapping()
     training_data = access_NCC(access_token)
+    # training_data = 'debiasing/fine_tuning_NB_BERT/bugs_test_objects.json'
 
     """
-    iterates through the WHOLE training part of the dataset, 
-    gender swappes a set of words from swapped_dict 
+    iterates through the WHOLE training part of the dataset,
+    gender swappes a set of words from swapped_dict
     and dumps the new json object in a file named filename
     """
-    gender_swap_dataset(training_data, filename, swapped_dict)
+    gender_swap_dataset(training_data, filename,
+                        replacements_pronouns, replacements_gender)
