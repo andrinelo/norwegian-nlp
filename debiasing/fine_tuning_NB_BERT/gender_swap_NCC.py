@@ -85,7 +85,7 @@ if __name__ == '__main__':
     replacements_pronouns = [('Hun', ['Han', 'Ham']), ('Hennes', ['Hans']),
                              ('Kvinner', ['Menn']), ('Fru', ['Herr'])]
 
-    replacements_gender = [('Hennes', ['Hans']), ('Jente', ['Gutt', 'Gut']), ('Jenta', ['Gutten']), ('Genter', ['Gutter']),
+    replacements_gender = [('Hennes', ['Hans']), ('Jente', ['Gutt', 'Gut']), ('Jenta', ['Gutten']), ('Jenter', ['Gutter']),
                            ('Jentene', ['Guttene']), ('Kvinne', ['Mann']), ('Kvinnene', ['Mennene']), ('Damene', ['Herrene']), ('Damer', ['Herrer'])]
 
     """
