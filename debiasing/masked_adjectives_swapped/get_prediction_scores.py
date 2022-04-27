@@ -13,7 +13,7 @@ def get_number_of_adjectives():
     return len(adjectives) 
 
 def get_data(model_name):
-    df = pd.read_csv('experiments/masked_adjectives/{}_adjectives.csv'.format(model_name))
+    df = pd.read_csv('debiasing/masked_adjectives_swapped/{}_adjectives.csv'.format(model_name))
     df_hun = df[(df['Differanse'] < 0)].sort_values(by=['Differanse'],ascending=True)
     df_han = df[(df['Differanse'] > 0)].sort_values(by=['Differanse'],ascending=False)
     return df_han, df_hun
@@ -40,20 +40,20 @@ def calculate_scores(df):
 
 if __name__ == '__main__': 
 
-    name_list = ['NorBERT', 'NB-BERT', 'mBERT']
+    name = 'male2female'
 
-    for model_name in name_list:
-        df_han, df_hun = get_data(model_name)
-        scores_han = calculate_scores(df_han)
-        scores_hun = calculate_scores(df_hun)
-        """
-        print('\n', model_name)
-        print('Male')
-        for key, value in scores_han.items(): 
-            print(key, value)
-        print('Female')
-        for key, value in scores_hun.items(): 
-            print(key, value)
-        """
-        with open("experiments/masked_adjectives/scores_{}.txt".format(model_name), 'w') as file:
+    df_han, df_hun = get_data(name)
+
+    scores_han = calculate_scores(df_han)
+    scores_hun = calculate_scores(df_hun)
+    """
+    print('\n', model_name)
+    print('Male')
+    for key, value in scores_han.items(): 
+        print(key, value)
+    print('Female')
+    for key, value in scores_hun.items(): 
+        print(key, value)
+    """
+    with open("debiasing/masked_adjectives_swapped/scores_{}.txt".format(name), 'w') as file:
             file.write('Male: ' + json.dumps(scores_han) + '\nFemale: ' + json.dumps(scores_hun))
