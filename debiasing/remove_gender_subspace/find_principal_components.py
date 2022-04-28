@@ -61,7 +61,7 @@ def run(sentence_path, models_list, number_of_features):
                 gender_word_pair_male='han'
                 gender_word_pair_female='hun'
                 print('Running {} sheet with {} and target words {} and {}'.format(sheet_name, model_name, gender_word_pair_male, gender_word_pair_female))
-                diff_hun_han = torch.mean(get_diff_embeddings(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_female, model_name))
+                diff_hun_han = get_diff_embeddings(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_female, model_name)
                 to_filename = 'debiasing/remove_gender_subspace/embeddings_{}_{}.txt'.format(sheet_name, name[models_list.index(model_name)])
                 np.savetxt(to_filename, diff_hun_han.numpy())
             
@@ -69,7 +69,7 @@ def run(sentence_path, models_list, number_of_features):
                 gender_word_pair_male='gutt'
                 gender_word_pair_female='jente'
                 print('Running {} sheet with {} and target words {} and {}'.format(sheet_name, model_name, gender_word_pair_male, gender_word_pair_female))
-                diff_jente_gutt = torch.mean(get_diff_embeddings(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_female, model_name))
+                diff_jente_gutt = get_diff_embeddings(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_female, model_name)
                 to_filename = 'debiasing/remove_gender_subspace/embeddings_{}_{}.txt'.format(sheet_name, name[models_list.index(model_name)])
                 np.savetxt(to_filename, diff_jente_gutt.numpy())
 

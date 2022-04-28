@@ -38,8 +38,8 @@ def extract_sentences():
     return sentences
 
 def get_hans_hanna_emb(model_name, type_of_embedding): 
-    hans = np.loadtxt('debiasing/remove_gender_subspace/{}_{}_{}.txt'.format(model_name, 'hans', type_of_embedding), usecols=768)
-    hanna = np.loadtxt('debiasing/remove_gender_subspace/{}_{}_{}.txt'.format(model_name, 'hanna', type_of_embedding), usecols=768)
+    hans = np.loadtxt('debiasing/remove_gender_subspace/{}_{}_{}.txt'.format(model_name, 'hans', type_of_embedding))
+    hanna = np.loadtxt('debiasing/remove_gender_subspace/{}_{}_{}.txt'.format(model_name, 'hanna', type_of_embedding))
     return hans, hanna
 
 def get_gender_subspace_emb(model_name, number_of_features): 
@@ -50,6 +50,9 @@ def get_gender_subspace_emb(model_name, number_of_features):
 
     emb_feat_dF = get_feat_dF(diff_embeddings)
     pca_emb = get_pca_emb(emb_feat_dF, number_of_features)
+
+    plot = plot_bar(pca_emb, model_name, number_of_features)
+
     return pca_emb
 
 
@@ -59,9 +62,11 @@ def get_emb_test_sentences(NorBERT):
     sentence_embeddings = [extract_total_embedding_from_text(sentence, NorBERT) for sentence in sentences]
     return sentence_embeddings
 
+
 def remove_gender_subspace(test_sentence_emb, gender_subspace_emb): 
     neutral_test_sentence_embeddings = [torch.sub(sentence_emb, gender_subspace_emb) for sentence_emb in test_sentence_emb]
     return neutral_test_sentence_embeddings
+
 
 def calculate_cosine(emb1, emb2): 
     sim = cosine_similarity(emb1, emb2)
@@ -109,11 +114,31 @@ def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, sentences, type_
 
 
 
+
+
+def plot_bar(pca_emb, model_name, number_of_features): 
+    plt.figure()
+    plt.figure(figsize=(10,10))
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=14)
+    plt.xlabel('Principal Component',fontsize=20)
+    plt.ylabel('Percentage of explained variation',fontsize=20)
+    plt.title("Explained variation per principal component in \n {}".format(str(model_name)),fontsize=20)
+
+    #x = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] 
+    x = [('PC' + str(i)) for i in range(1, number_of_features+1)]
+    y = [pca_emb.explained_variance_ratio_[i] for i in range(number_of_features)]
+    #y = [pca_emb.explained_variance_ratio_[0], pca_emb.explained_variance_ratio_[1], pca_emb.explained_variance_ratio_[2], pca_emb.explained_variance_ratio_[3],
+    #pca_emb.explained_variance_ratio_[4], pca_emb.explained_variance_ratio_[5], pca_emb.explained_variance_ratio_[6], pca_emb.explained_variance_ratio_[7], 
+    #pca_emb.explained_variance_ratio_[8], pca_emb.explained_variance_ratio_[9]] 
+    plt.bar(x, y)
+
+    save_plot(plt, 'debiasing/remove_gender_subspace/PCA_{}.png'.format(model_name))
+    save_plot(plt, 'debiasing/remove_gender_subspace/PCA_{}.eps'.format(model_name))
+
+
 if __name__ == '__main__': 
 
-    gender_subspace = get_gender_subspace_emb('NorBERT', 10)
-
-"""
     NorBERT = 'ltgoslo/norbert'
     NB_BERT = 'NbAiLab/nb-bert-base'
     mBERT = 'bert-base-multilingual-cased'
@@ -142,6 +167,3 @@ if __name__ == '__main__':
             diffs.append(diff_list)
     
         plot(diffs[0], diffs[1], diffs[2], sentences, type)
-    
-
-"""
