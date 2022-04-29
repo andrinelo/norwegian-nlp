@@ -145,13 +145,15 @@ if __name__ == '__main__':
 
     model_list = [NorBERT, NB_BERT, mBERT]
     model_name = ['NorBERT', 'NB-BERT', 'mBERT']
-    number_of_features = [2, 1, 2]
+    number_of_features = [10, 10, 10]
 
     sentences = extract_sentences()
     diffs = []
 
     type_of_embeddings = ['SA', 'TWA']
 
+
+   
     for type in type_of_embeddings: 
         for i in range(len(model_list)):
 
@@ -165,5 +167,4 @@ if __name__ == '__main__':
             diff_list = get_similarity(neutral_test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/diffs.txt')
 
             diffs.append(diff_list)
-    
         plot(diffs[0], diffs[1], diffs[2], sentences, type)
