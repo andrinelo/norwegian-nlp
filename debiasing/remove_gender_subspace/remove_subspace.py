@@ -30,7 +30,7 @@ def get_pca_emb(emb_feat_dF, n):
 
     print('Explained variation per principal component: {}'.format(pca_emb.explained_variance_ratio_))
 
-    return pca_emb
+    return torch.from_numpy(pca_emb.components_)
 
 def extract_sentences():
     df = pd.read_excel('debiasing/remove_gender_subspace/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
@@ -46,12 +46,10 @@ def get_gender_subspace_emb(model_name, number_of_features):
 
     diff_embeddings = np.loadtxt('debiasing/remove_gender_subspace/diff_embeddings_{}.txt'.format(model_name), delimiter=' ')
 
-    print(len(diff_embeddings))
-
     emb_feat_dF = get_feat_dF(diff_embeddings)
     pca_emb = get_pca_emb(emb_feat_dF, number_of_features)
 
-    plot = plot_bar(pca_emb, model_name, number_of_features)
+    #plot = plot_bar(pca_emb, model_name, number_of_features)
 
     return pca_emb
 
@@ -63,9 +61,21 @@ def get_emb_test_sentences(NorBERT):
     return sentence_embeddings
 
 
-def remove_gender_subspace(test_sentence_emb, gender_subspace_emb): 
-    neutral_test_sentence_embeddings = [torch.sub(sentence_emb, gender_subspace_emb) for sentence_emb in test_sentence_emb]
-    return neutral_test_sentence_embeddings
+def remove_gender_subspace(test_sentence_emb, gender_subspace_emb):
+    # Create empty matrix that is 768x13
+    a = np.zeros(shape=(13,768))
+    for i in range(len(test_sentence_emb)):
+        a[i]=test_sentence_emb[i].numpy()
+
+    # Return numpy matrix converted back to a Torch
+    for i in range(len(gender_subspace_emb)):
+        g = gender_subspace_emb[i].numpy()
+        for i in range(len(test_sentence_emb)):
+            w = a[i]
+            w = w-g*((np.dot(w,g))/(np.dot(g,g)))
+            a[i]=w
+
+    return torch.from_numpy(a)
 
 
 def calculate_cosine(emb1, emb2): 
@@ -148,19 +158,15 @@ if __name__ == '__main__':
     number_of_features = [10, 10, 10]
 
     sentences = extract_sentences()
-    diffs = []
-
+    
     type_of_embeddings = ['SA', 'TWA']
-
-
    
     for type in type_of_embeddings: 
+        diffs = []
         for i in range(len(model_list)):
-
             test_sentence_embeddings = get_emb_test_sentences(NorBERT)
-            gender_subspace = get_gender_subspace_emb(model_name[i], number_of_features[i])
-            neutral_test_sentence_embeddings = remove_gender_subspace(test_sentence_embeddings, gender_subspace)
-            
+            pca_embedding = get_gender_subspace_emb(model_name[i],2)
+            neutral_test_sentence_embeddings = remove_gender_subspace(test_sentence_embeddings, pca_embedding)
 
             hans, hanna = get_hans_hanna_emb(model_name[i], type)
 
