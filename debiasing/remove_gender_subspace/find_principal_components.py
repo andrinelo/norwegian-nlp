@@ -43,7 +43,7 @@ def get_diff_embeddings(sentence_path, sheet_name, gender_word_pair_male, gender
     hun_embeddings = extract_all_embeddings_for_specific_word_in_multiple_sentences(hun_sentences, model_name, gender_word_pair_female)
     han_embeddings = extract_all_embeddings_for_specific_word_in_multiple_sentences(han_sentences, model_name, gender_word_pair_male)
 
-    diff_embeddings = han_embeddings - hun_embeddings 
+    diff_embeddings = han_embeddings / hun_embeddings 
     print('Diff embedding: ', diff_embeddings)
     return diff_embeddings
 
@@ -92,8 +92,8 @@ if __name__ == '__main__':
     NB_BERT = 'NbAiLab/nb-bert-base'
     mBERT = 'bert-base-multilingual-cased'
 
-    models_list = [NorBERT]
-    name = ['NorBERT']
+    models_list = [mBERT]
+    name = ['bert-base-multilingual-cased']
     sentence_path = 'debiasing/remove_gender_subspace/sample_sentences.xlsx'
     number_of_features = 10 #antall komponenteer
     
