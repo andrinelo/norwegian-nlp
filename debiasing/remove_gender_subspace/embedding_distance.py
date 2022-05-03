@@ -28,7 +28,6 @@ def get_total_emb_sentence_context(text, model):
     torch_emb = torch.stack(total, dim=0)
     mean_emb = torch.mean(torch_emb, dim=0)
     #print('Size of total embedding as average of total of all sentences: ', mean_emb.size())
-    np.savetxt('debiasing/remove_gender_subspace/hansoghanna_SA.txt', mean_emb.numpy())
     return mean_emb
 
 def get_avg_han_hun(text, model, hun_han): 

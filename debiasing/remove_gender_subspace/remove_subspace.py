@@ -21,7 +21,7 @@ def get_feat_dF(embeddings):
 
     return emb_feat_dF
 
-def get_pca_emb(emb_feat_dF, n): 
+def get_pca_emb(emb_feat_dF, n, model_name): 
     #calculate PCA of top n features
     pca_emb = PCA(n_components=n)
     principalComponents_emb = pca_emb.fit_transform(emb_feat_dF)
@@ -30,6 +30,9 @@ def get_pca_emb(emb_feat_dF, n):
 
     print('Explained variation per principal component: {}'.format(pca_emb.explained_variance_ratio_))
 
+    if n==10:
+        return pca_emb
+    
     return torch.from_numpy(pca_emb.components_)
 
 def extract_sentences():
@@ -38,20 +41,20 @@ def extract_sentences():
     return sentences
 
 def get_hans_hanna_emb(model_name, type_of_embedding): 
-    hans = np.loadtxt('debiasing/remove_gender_subspace/{}_{}_{}.txt'.format(model_name, 'hans', type_of_embedding))
-    hanna = np.loadtxt('debiasing/remove_gender_subspace/{}_{}_{}.txt'.format(model_name, 'hanna', type_of_embedding))
+    hans = np.loadtxt('debiasing/remove_gender_subspace/data_emb/{}_{}_{}.txt'.format(model_name, 'hans', type_of_embedding))
+    hanna = np.loadtxt('debiasing/remove_gender_subspace/data_emb/{}_{}_{}.txt'.format(model_name, 'hanna', type_of_embedding))
     return hans, hanna
 
-def get_gender_subspace_emb(model_name, number_of_features): 
+def get_gender_subspace_emb(model_name): 
 
-    diff_embeddings = np.loadtxt('debiasing/remove_gender_subspace/diff_embeddings_{}.txt'.format(model_name), delimiter=' ')
+    diff_embeddings = np.loadtxt('debiasing/remove_gender_subspace/data_emb/diff_embeddings_{}.txt'.format(model_name), delimiter=' ')
 
     emb_feat_dF = get_feat_dF(diff_embeddings)
-    pca_emb = get_pca_emb(emb_feat_dF, number_of_features)
+    pca_emb_2 = get_pca_emb(emb_feat_dF, 2, model_name)
+    pca_emb_10 = get_pca_emb(emb_feat_dF, 10, model_name)
+    plot_bar(pca_emb_10, model_name, 10)
 
-    #plot = plot_bar(pca_emb, model_name, number_of_features)
-
-    return pca_emb
+    return pca_emb_2
 
 
 def get_emb_test_sentences(NorBERT): 
@@ -103,7 +106,7 @@ def save_plot(plot, plot_to_filename):
     plot.savefig(plot_to_filename)
 
 
-def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, sentences, type_of_embeddings):
+def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, sentences, type_of_embeddings, when):
 
     data = {'NorBERT': diff_list_norbert, 'NB-BERT': diff_list_nb_bert, 'mBERT': diff_list_mbert}
     df = pd.DataFrame(data,columns=['NorBERT','NB-BERT', 'mBERT'], index = ['S{}'.format(i) for i in range(1, len(sentences)+1)])
@@ -115,14 +118,12 @@ def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, sentences, type_
 
     plt.ylabel('Sentence used to calculate similarity',fontsize=10, labelpad=2)
     plt.xlabel('Cosine similarity difference (male-female)',fontsize=10)
-    plt.title("Results for [{}]\n".format(type_of_embeddings),fontsize=15)
+    #plt.title("Results for [{}]\n".format(type_of_embeddings),fontsize=15)
 
     #plt.show()
 
-    save_plot(plt, 'debiasing/remove_gender_subspace/diff_plot_'+type_of_embeddings+'.eps')
-    save_plot(plt, 'debiasing/remove_gender_subspace/diff_plot_'+type_of_embeddings+'.png')
-
-
+    save_plot(plt, 'debiasing/remove_gender_subspace/results/diff_plot_DIFFS'+when+type_of_embeddings+'.eps')
+    save_plot(plt, 'debiasing/remove_gender_subspace/results/diff_plot_DIFFS'+when+type_of_embeddings+'.png')
 
 
 
@@ -133,18 +134,13 @@ def plot_bar(pca_emb, model_name, number_of_features):
     plt.yticks(fontsize=14)
     plt.xlabel('Principal Component',fontsize=20)
     plt.ylabel('Percentage of explained variation',fontsize=20)
-    plt.title("Explained variation per principal component in \n {}".format(str(model_name)),fontsize=20)
 
-    #x = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] 
     x = [('PC' + str(i)) for i in range(1, number_of_features+1)]
     y = [pca_emb.explained_variance_ratio_[i] for i in range(number_of_features)]
-    #y = [pca_emb.explained_variance_ratio_[0], pca_emb.explained_variance_ratio_[1], pca_emb.explained_variance_ratio_[2], pca_emb.explained_variance_ratio_[3],
-    #pca_emb.explained_variance_ratio_[4], pca_emb.explained_variance_ratio_[5], pca_emb.explained_variance_ratio_[6], pca_emb.explained_variance_ratio_[7], 
-    #pca_emb.explained_variance_ratio_[8], pca_emb.explained_variance_ratio_[9]] 
-    plt.bar(x, y)
+    plt.bar(x, y, color='steelblue')
 
-    save_plot(plt, 'debiasing/remove_gender_subspace/PCA_{}.png'.format(model_name))
-    save_plot(plt, 'debiasing/remove_gender_subspace/PCA_{}.eps'.format(model_name))
+    save_plot(plt, 'debiasing/remove_gender_subspace/results/PCA_{}.png'.format(model_name))
+    save_plot(plt, 'debiasing/remove_gender_subspace/results/PCA_{}.eps'.format(model_name))
 
 
 if __name__ == '__main__': 
@@ -155,22 +151,26 @@ if __name__ == '__main__':
 
     model_list = [NorBERT, NB_BERT, mBERT]
     model_name = ['NorBERT', 'NB-BERT', 'mBERT']
-    number_of_features = [10, 10, 10]
 
     sentences = extract_sentences()
+    test_sentence_embeddings = get_emb_test_sentences(NorBERT)
     
     type_of_embeddings = ['SA', 'TWA']
    
     for type in type_of_embeddings: 
         diffs = []
+        diffs_debiased = []
         for i in range(len(model_list)):
-            test_sentence_embeddings = get_emb_test_sentences(NorBERT)
-            pca_embedding = get_gender_subspace_emb(model_name[i],2)
+            
+            pca_embedding = get_gender_subspace_emb(model_name[i])
             neutral_test_sentence_embeddings = remove_gender_subspace(test_sentence_embeddings, pca_embedding)
 
             hans, hanna = get_hans_hanna_emb(model_name[i], type)
 
-            diff_list = get_similarity(neutral_test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/diffs.txt')
+            diff_list = get_similarity(test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs.txt')
+            diff_list_debiased = get_similarity(neutral_test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs_debiased.txt')
 
             diffs.append(diff_list)
-        plot(diffs[0], diffs[1], diffs[2], sentences, type)
+            diffs_debiased.append(diff_list_debiased)
+        plot(diffs[0], diffs[1], diffs[2], sentences, type, 'original')
+        plot(diffs_debiased[0], diffs_debiased[1], diffs_debiased[2], sentences, type, 'debiased')
