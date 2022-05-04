@@ -34,9 +34,9 @@ titleNB_BERT = 'Number of adjectives biased in male and \n female direction as p
 titlemBERT = 'Number of adjectives biased in male and \n female direction as predicted by mBERT'
 
 
-NorBERTsave = 'experiments\masked_adjectives\plot_pie_NorBERT.eps'
-NB_BERTsave = 'experiments\masked_adjectives\plot_pie_NB_BERT.eps'
-mBERTsave = 'experiments\masked_adjectives\plot_pie_mBERT.eps'
+NorBERTsave = 'experiments\masked_adjectives\results\plot_pie_NorBERT.eps'
+NB_BERTsave = 'experiments\masked_adjectives\results\plot_pie_NB_BERT.eps'
+mBERTsave = 'experiments\masked_adjectives\results\plot_pie_mBERT.eps'
 
 plot_pie(NorBERT, labels, titleNorBERT, NorBERTsave)
 plot_pie(NB_BERT, labels, titleNB_BERT, NB_BERTsave)

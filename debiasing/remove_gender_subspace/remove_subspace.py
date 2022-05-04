@@ -36,18 +36,18 @@ def get_pca_emb(emb_feat_dF, n, model_name):
     return torch.from_numpy(pca_emb.components_)
 
 def extract_sentences():
-    df = pd.read_excel('debiasing/remove_gender_subspace/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
+    df = pd.read_excel('data_sets/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
     sentences = df['Setning'].values
     return sentences
 
 def get_hans_hanna_emb(model_name, type_of_embedding): 
-    hans = np.loadtxt('debiasing/remove_gender_subspace/data_emb/{}_{}_{}.txt'.format(model_name, 'hans', type_of_embedding))
-    hanna = np.loadtxt('debiasing/remove_gender_subspace/data_emb/{}_{}_{}.txt'.format(model_name, 'hanna', type_of_embedding))
+    hans = np.loadtxt('debiasing/remove_gender_subspace/data/{}_{}_{}.txt'.format(model_name, 'hans', type_of_embedding))
+    hanna = np.loadtxt('debiasing/remove_gender_subspace/data/{}_{}_{}.txt'.format(model_name, 'hanna', type_of_embedding))
     return hans, hanna
 
 def get_gender_subspace_emb(model_name): 
 
-    diff_embeddings = np.loadtxt('debiasing/remove_gender_subspace/data_emb/diff_embeddings_{}.txt'.format(model_name), delimiter=' ')
+    diff_embeddings = np.loadtxt('debiasing/remove_gender_subspace/data/diff_embeddings_{}.txt'.format(model_name), delimiter=' ')
 
     emb_feat_dF = get_feat_dF(diff_embeddings)
     pca_emb_2 = get_pca_emb(emb_feat_dF, 2, model_name)
@@ -58,7 +58,7 @@ def get_gender_subspace_emb(model_name):
 
 
 def get_emb_test_sentences(NorBERT): 
-    df = pd.read_excel('debiasing/remove_gender_subspace/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
+    df = pd.read_excel('data_sets/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
     sentences = df['Setning'].values
     sentence_embeddings = [extract_total_embedding_from_text(sentence, NorBERT) for sentence in sentences]
     return sentence_embeddings

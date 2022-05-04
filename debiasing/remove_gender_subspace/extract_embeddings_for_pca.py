@@ -62,7 +62,7 @@ def run(sentence_path, models_list, number_of_features):
                 gender_word_pair_female='hun'
                 print('Running {} sheet with {} and target words {} and {}'.format(sheet_name, model_name, gender_word_pair_male, gender_word_pair_female))
                 diff_hun_han = get_diff_embeddings(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_female, model_name)
-                to_filename = 'debiasing/remove_gender_subspace/data_emb/embeddings_{}_{}.txt'.format(sheet_name, name[models_list.index(model_name)])
+                to_filename = 'debiasing/remove_gender_subspace/data/embeddings_{}_{}.txt'.format(sheet_name, name[models_list.index(model_name)])
                 np.savetxt(to_filename, diff_hun_han.numpy())
             
             if sheet_name == 'jente_gutt_tilfeldig':
@@ -70,11 +70,11 @@ def run(sentence_path, models_list, number_of_features):
                 gender_word_pair_female='jente'
                 print('Running {} sheet with {} and target words {} and {}'.format(sheet_name, model_name, gender_word_pair_male, gender_word_pair_female))
                 diff_jente_gutt = get_diff_embeddings(sentence_path, sheet_name, gender_word_pair_male, gender_word_pair_female, model_name)
-                to_filename = 'debiasing/remove_gender_subspace/data_emb/embeddings_{}_{}.txt'.format(sheet_name, name[models_list.index(model_name)])
+                to_filename = 'debiasing/remove_gender_subspace/data/embeddings_{}_{}.txt'.format(sheet_name, name[models_list.index(model_name)])
                 np.savetxt(to_filename, diff_jente_gutt.numpy())
 
         diff_embeddings = torch.cat((diff_jente_gutt, diff_hun_han), dim=0)
-        to_filename = 'debiasing/remove_gender_subspace/data_emb/diff_embeddings_{}.txt'.format(name[models_list.index(model_name)])
+        to_filename = 'debiasing/remove_gender_subspace/data/diff_embeddings_{}.txt'.format(name[models_list.index(model_name)])
         np.savetxt(to_filename, diff_embeddings.numpy())
                 
             
@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
     models_list = [mBERT]
     name = ['mBERT']
-    sentence_path = 'debiasing/remove_gender_subspace/sample_sentences.xlsx'
+    sentence_path = 'data_sets/sample_sentences.xlsx'
     number_of_features = 10 #antall komponenteer
     
     run(sentence_path, models_list, number_of_features)

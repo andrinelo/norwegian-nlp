@@ -29,8 +29,8 @@ labels = ["Male", "Female", "Excluded from results"]
 title = 'Number of adjectives biased in male and female \n direction as predicted by NB-BERT-male2female'
 
 
-NB_BERTsave_eps = 'debiasing/masked_adjectives_swapped/plot_pie_NB_BERT_male2female.eps'
-NB_BERTsave_png = 'debiasing/masked_adjectives_swapped/plot_pie_NB_BERT_male2female.png'
+NB_BERTsave_eps = 'debiasing/masked_adjectives_swapped/results/plot_pie_NB_BERT_male2female.eps'
+NB_BERTsave_png = 'debiasing/masked_adjectives_swapped/results/plot_pie_NB_BERT_male2female.png'
 
 
 plot_pie(male2female, labels, title, NB_BERTsave_eps)

@@ -55,8 +55,8 @@ def run(model, model_name, hanna_text, hans_text):
     print('Extracting total embeddings for Hans...')
     hans_emb = get_total_emb_sentence_context(hans_text, model)
 
-    np.savetxt('debiasing/remove_gender_subspace/{}_hans_SA.txt'.format(model_name), hans_emb.numpy())
-    np.savetxt('debiasing/remove_gender_subspace/{}_hanna_SA.txt'.format(model_name), hanna_emb.numpy())
+    np.savetxt('debiasing/remove_gender_subspace/data/{}_hans_SA.txt'.format(model_name), hans_emb.numpy())
+    np.savetxt('debiasing/remove_gender_subspace/data/{}_hanna_SA.txt'.format(model_name), hanna_emb.numpy())
 
 
     type_of_embeddings = 'Word_Embeddings_HAN_HUN'
@@ -65,8 +65,8 @@ def run(model, model_name, hanna_text, hans_text):
     print('Extracting average embeddings for HAN in Hans text...')
     hans_avg = get_avg_han_hun(hans_text, model, 'han')
 
-    np.savetxt('debiasing/remove_gender_subspace/{}_hans_TWA.txt'.format(model_name), hans_avg.numpy())
-    np.savetxt('debiasing/remove_gender_subspace/{}_hanna_TWA.txt'.format(model_name), hanna_avg.numpy())
+    np.savetxt('debiasing/remove_gender_subspace/data/{}_hans_TWA.txt'.format(model_name), hans_avg.numpy())
+    np.savetxt('debiasing/remove_gender_subspace/data/{}_hanna_TWA.txt'.format(model_name), hanna_avg.numpy())
 
     
 if __name__ == '__main__': 
@@ -78,8 +78,8 @@ if __name__ == '__main__':
     model_list = [NorBERT, NB_BERT, mBERT]
     model_name = ['NorBERT', 'NB-BERT', 'mBERT']
     
-    hanna_text = read_txt_file_to_text('experiments\hanna_og_hans\hanna.txt')
-    hans_text = read_txt_file_to_text('experiments\hanna_og_hans\hans.txt')
+    hanna_text = read_txt_file_to_text('data_sets/hanna.txt')
+    hans_text = read_txt_file_to_text('data_sets/hans.txt')
 
     for i in range(len(model_list)):
         run(model_list[i], model_name[i], hanna_text, hans_text)

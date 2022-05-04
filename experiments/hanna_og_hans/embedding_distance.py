@@ -62,14 +62,9 @@ def calculate_cosine(emb1, emb2):
 
 
 def extract_sentences():
-    df = pd.read_excel('experiments/hanna_og_hans/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
+    df = pd.read_excel('data_sets/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
     sentences = df['Setning'].values
     return sentences
-
-def extract_words():
-    df = pd.read_excel('experiments/hanna_og_hans/hanna_og_hans_vurderinger.xlsx', sheet_name='Ark 1')
-    words = df['Ord'].values
-    return words
 
 def get_similarity(sentence_embeddings, sentences, embedding_female, embedding_male, type_of_embeddings, model_name, filename): 
 
@@ -108,8 +103,8 @@ def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, sentences, type_
 
     #plt.show()
 
-    save_plot(plt, 'experiments/hanna_og_hans/diff_plot_'+type_of_embeddings+'.eps')
-    save_plot(plt, 'experiments/hanna_og_hans/diff_plot_'+type_of_embeddings+'.png')
+    save_plot(plt, 'experiments/hanna_og_hans/results/diff_plot_'+type_of_embeddings+'.eps')
+    save_plot(plt, 'experiments/hanna_og_hans/results/diff_plot_'+type_of_embeddings+'.png')
 
 
 def run(model, model_name, filename, sentences, sentence_embeddings, variable): 
@@ -147,10 +142,10 @@ if __name__ == '__main__':
 
     model_list = [NorBERT, NB_BERT, mBERT]
     name = ['NorBERT', 'NB-BERT', 'mBERT']
-    file_name = ['experiments/hanna_og_hans/NorBERT_results.csv', 'experiments/hanna_og_hans/NB-BERT_results.csv', 'experiments/hanna_og_hans/mBERT_results.csv']
+    file_name = ['experiments/hanna_og_hans/results/NorBERT_results.csv', 'experiments/hanna_og_hans/results/NB-BERT_results.csv', 'experiments/hanna_og_hans/results/mBERT_results.csv']
 
-    hanna_text = read_txt_file_to_text('experiments\hanna_og_hans\hanna.txt')
-    hans_text = read_txt_file_to_text('experiments\hanna_og_hans\hans.txt')
+    hanna_text = read_txt_file_to_text('data_sets/hanna.txt')
+    hans_text = read_txt_file_to_text('data_sets/hans.txt')
 
     sentences = extract_sentences()
     print(sentences)
@@ -166,20 +161,3 @@ if __name__ == '__main__':
         diffs.append(diff_list)
 
     plot(diffs[0], diffs[1], diffs[2], sentences, type_of_embeddings)
-    """
-    type_of_embeddings = 'Sentence_Embeddings'
-    
-    norbert_all = [0.0009489655494689941, -0.0004741549491882324, 0.00046569108963012695, 0.0013622045516967773,  0.0007605552673339844, 0.005228102207183838, 0.0034021735191345215,  0.00268477201461792, 0.0009118318557739258, 0.0033776164054870605, 0.0008611083030700684, 0.00044840574264526367, 0.0005585551261901855]
-    nbbert_all = [0.008219053037464619, 0.007631331216543913, 0.008047150913625956,  0.0070099295116961, 0.009760905057191849, 0.011491641402244568, 0.011944038327783346, 0.00812908262014389, 0.011035017669200897, 0.008744679624214768, 0.008929337374866009, 0.009933010675013065, 0.009675892069935799]
-    mbert_all = [-0.0003962889313697815, -0.000747237354516983, -0.0006272830069065094, -0.00048665329813957214, -0.0006537213921546936,  -0.0006487146019935608, -0.0006741024553775787, -0.0004284083843231201, -0.0005349442362785339, -0.0006277821958065033, -0.0008183121681213379, -7.099658250808716e-05, -0.0004644244909286499]
-
-    plot(norbert_all, nbbert_all, mbert_all, sentences, type_of_embeddings)
-
-    type_of_embeddings = 'Word_Embeddings_HAN_HUN'
-
-    norbert_avg = [0.03540682792663574, 0.020932257175445557, 0.028891682624816895, 0.035604655742645264, 0.036869049072265625, 0.05527776479721069, 0.045630455017089844, 0.04753124713897705, 0.03744065761566162, 0.04349839687347412, 0.029407620429992676, 0.03199422359466553, 0.03484904766082764]
-    nbbert_avg = [0.0014400025829672813, 0.0016048075631260872, 0.001924663782119751, 0.0017376560717821121, 0.0014265403151512146, 0.001714412122964859, 0.0015875641256570816, 0.0016189496964216232, 0.0016769710928201675, 0.0015467171906493604, 0.0016932403668761253, 0.0015234649181365967, 0.0019463859498500824]
-    mbert_avg = [0.01757870987057686, 0.025338388979434967, 0.03461392968893051, 0.026694869622588158, 0.028685137629508972, 0.018789853900671005, 0.023078974336385727, 0.027324534952640533, 0.022552743554115295, 0.03131864592432976, 0.01633954793214798, 0.045005571097135544, 0.04073863849043846]
-
-    plot(norbert_avg, nbbert_avg, mbert_avg, sentences, type_of_embeddings)
-    """
