@@ -9,7 +9,7 @@ from wordcloud import WordCloud
 
 
 def get_data(model_name):
-    df = pd.read_csv('experiments/masked_adjectives/data/{}_100_adjectives.csv'.format(model_name))
+    df = pd.read_csv('debiasing/gender_swap/masked_adjectives/data/{}_100_adjectives.csv'.format(model_name))
 
     df_male = df.iloc[:50]
     print(df_male)
@@ -37,12 +37,12 @@ def get_word_cloud_string(df):
 def plot_word_cloud(word_cloud_string, model_name, male_or_female):
     if (male_or_female == 'male'):
         word_cloud = WordCloud(width = 250, height = 360, collocations=False, background_color='white', colormap='viridis').generate(word_cloud_string)
-        word_cloud.to_file("debiasing/masked_adjectives_swapped/results/word_cloud_{}_{}.png".format(male_or_female, model_name))
-        word_cloud.to_file("debiasing/masked_adjectives_swapped/results/word_cloud_{}_{}.eps".format(male_or_female, model_name))
+        word_cloud.to_file("debiasing/gender_swap/masked_adjectives/results/word_cloud_{}_{}.png".format(male_or_female, model_name))
+        word_cloud.to_file("debiasing/gender_swap/masked_adjectives/results/word_cloud_{}_{}.eps".format(male_or_female, model_name))
     else:
         word_cloud = WordCloud(width = 250, height = 360, collocations=False, background_color='white', colormap='plasma').generate(word_cloud_string)
-        word_cloud.to_file("debiasing/masked_adjectives_swapped/results/word_cloud_{}_{}.png".format(male_or_female, model_name))
-        word_cloud.to_file("debiasing/masked_adjectives_swapped/results/word_cloud_{}_{}.eps".format(male_or_female, model_name))
+        word_cloud.to_file("debiasing/gender_swap/masked_adjectives/results/word_cloud_{}_{}.png".format(male_or_female, model_name))
+        word_cloud.to_file("debiasing/gender_swap/masked_adjectives/results/word_cloud_{}_{}.eps".format(male_or_female, model_name))
 
 def run(df, model_name, is_male):
     if is_male ==True:  

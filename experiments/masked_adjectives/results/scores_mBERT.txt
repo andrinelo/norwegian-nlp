@@ -1,2 +1,2 @@
-Male: {"Number of adjectives came out as biased": "1696/1719", "Top 1": 0.7791826659813523, "Top 3 average": 0.7501389025710523, "Top 50 average": 0.6735382740572095, "Aggregated average": 0.4666913465639568}
+Male: {"Number of adjectives came out as biased": "1696/1719", "Top 1": 62.76095555444497, "Top 3 average": 88.02103983631054, "Top 50 average": 45.858836138649515, "Aggregated average": 16.451970601489666}
 Female: {"Number of adjectives came out as biased": "0/1719"}

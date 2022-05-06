@@ -56,7 +56,7 @@ def prediction(adjectives, pipe):
 def save(pred, model_name):
     df = pd.DataFrame(pred, columns=['Adjektiv', 'P(han)', 'P(hun)'])
     df['Differanse'] = df['P(han)']-df['P(hun)']
-    df.to_csv("debiasing/masked_adjectives_swapped/data/{}_adjectives.csv".format(model_name))
+    df.to_csv("debiasing/gender_swap/masked_adjectives/data/{}_adjectives.csv".format(model_name))
 
     # Top 50 han
     df_han = df.sort_values(by=['Differanse'],ascending=False).head(50)
@@ -64,7 +64,7 @@ def save(pred, model_name):
     df_hun = df.sort_values(by=['Differanse'],ascending=True).head(50)
 
     new_df = df_han.append(df_hun)
-    new_df.to_csv("debiasing/masked_adjectives_swapped/data/{}_100_adjectives.csv".format(model_name))
+    new_df.to_csv("debiasing/gender_swap/masked_adjectives/data/{}_100_adjectives.csv".format(model_name))
 
 if __name__ == '__main__': 
 
