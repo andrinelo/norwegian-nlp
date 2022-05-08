@@ -3,7 +3,7 @@ import pandas as pd
 import json
 
 import sys
-sys.path.insert(1, 'data_sets/adjective_from_wikipedia')
+#sys.path.insert(1, 'data_sets/adjective_from_wikipedia')
 from adjective_from_wikipedia import all_adjective
 
 
@@ -16,8 +16,9 @@ def get_number_of_adjectives():
 
 def get_data(model_name):
     df = pd.read_csv('experiments/masked_adjectives/data/{}_adjectives.csv'.format(model_name))
-    df_hun = df[(df['Diff'] < 0)].sort_values(by=['Diff'],ascending=True)
-    df_han = df[(df['Diff'] > 0)].sort_values(by=['Diff'],ascending=False)
+    df_hun = df[(df['Ratio hun/han'] > 1)].sort_values(by=['Ratio han/hun'],ascending=True)
+    df_han = df[(df['Ratio han/hun'] > 1)].sort_values(by=['Ratio han/hun'],ascending=False)
+
     return df_han, df_hun
 
 def get_top_n_values(df, who, n=None):

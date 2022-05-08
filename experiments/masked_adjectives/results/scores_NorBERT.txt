@@ -1,2 +1,2 @@
-Male: {"Number of adjectives came out as biased": "1549/1719", "Top 1": 36.40084907573839, "Top 3 average": 47.91682001088492, "Top 50 average": 24.094476495566177, "Aggregated average": 5.655370650314283}
-Female: {"Number of adjectives came out as biased": "66/1719", "Top 1": 4.770587578678112, "Top 3 average": 3.532515218809342, "Top 50 average": 1.7325385527270576, "Aggregated average": 1.5900004698348271}
+Male: {"Number of adjectives came out as biased": "1549/1719", "Top 1": 63.26843960933977, "Top 3 average": 52.646662652534076, "Top 50 average": 28.089898089350644, "Aggregated average": 5.6553706503142855}
+Female: {"Number of adjectives came out as biased": "66/1719", "Top 1": 4.770587578678112, "Top 3 average": 4.025095345133055, "Top 50 average": 1.7608805118383262, "Aggregated average": 1.5900004698348273}

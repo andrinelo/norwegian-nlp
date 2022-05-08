@@ -61,12 +61,12 @@ def save(pred, model_name):
     df.to_csv("experiments/masked_adjectives/data/{}_adjectives.csv".format(model_name))
 
     # Top 50 han
-    df_han = df.sort_values(by=['Diff'],ascending=False).head(50)
+    df_han = df.sort_values(by=['Ratio han/hun'],ascending=False).head(50)
     # Top 50 hun 
-    df_hun = df.sort_values(by=['Diff'],ascending=True).head(50)
+    df_hun = df.sort_values(by=['Ratio han/hun'],ascending=True).head(50)
 
-    new_df = df_han.append(df_hun)
-    new_df.to_csv("experiments/masked_adjectives/data/{}_100_adjectives.csv".format(model_name))
+    df_han.to_csv("experiments/masked_adjectives/data/{}_male_adjectives.csv".format(model_name))
+    df_hun.to_csv("experiments/masked_adjectives/data/{}_female_adjectives.csv".format(model_name))
 
 if __name__ == '__main__': 
 

@@ -14,14 +14,14 @@ def get_number_of_adjectives():
 
 def get_data(model_name):
     df = pd.read_csv('debiasing/gender_swap/masked_adjectives/data/{}_adjectives.csv'.format(model_name))
-    df_hun = df[(df['Differanse'] < 0)].sort_values(by=['Differanse'],ascending=True)
-    df_han = df[(df['Differanse'] > 0)].sort_values(by=['Differanse'],ascending=False)
+    df_hun = df[(df['Ratio hun/han'] > 1)].sort_values(by=['Ratio han/hun'],ascending=True)
+    df_han = df[(df['Ratio han/hun'] > 1)].sort_values(by=['Ratio han/hun'],ascending=False)
     return df_han, df_hun
 
 def get_top_n_values(df, n=None):
     if n is not None:
         df = df[:n]
-    values_list = [item for item in df['Differanse']]
+    values_list = [item for item in df['Ratio hun/han']]
     summarize = sum(values_list)/df.shape[0]
     return summarize
 

@@ -11,12 +11,10 @@ from wordcloud import WordCloud
 def get_data(model_name):
     df = pd.read_csv('debiasing/gender_swap/masked_adjectives/data/{}_100_adjectives.csv'.format(model_name))
 
-    df_male = df.iloc[:50]
-    print(df_male)
-    df_female = df.iloc[51:]
-    print(df_female)
+    df_hun = pd.read_csv('debiasing/gender_swap/masked_adjectives/data/{}_female_adjectives.csv'.format(model_name))
+    df_han = pd.read_csv('debiasing/gender_swap/masked_adjectives/data/{}_male_adjectives.csv'.format(model_name))
 
-    return df_male, df_female
+    return df_han, df_hun
 
 
 
@@ -24,11 +22,8 @@ def get_word_cloud_string(df):
 
     df_rounded= df.round(decimals=3)
     word_cloud_string = ''
-    #int(row['Differanse']*1000)
     for index, row in df_rounded.iterrows(): 
-        print(row['Adjektiv'], row['Differanse'])
         words = [row['Adjektiv'] for i in range(1)]
-        print(words)
         string = ' '.join(words) + ' '
         word_cloud_string += string
     return word_cloud_string
