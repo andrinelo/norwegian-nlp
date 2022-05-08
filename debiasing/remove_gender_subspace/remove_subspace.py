@@ -86,12 +86,12 @@ def calculate_cosine(emb1, emb2):
     return sim
 
 
-def get_similarity(sentence_embeddings, embedding_female, embedding_male, type_of_embeddings, model_name, filename): 
+def get_similarity(sentence_embeddings, embedding_female, embedding_male, type_of_embeddings, model_name, filename, when): 
 
     diff_list = []
 
     with open(filename, 'a') as file:
-        file.write('\n ===== Results for model [{}] with [{}] ===== \n'.format(model_name, type_of_embeddings))
+        file.write('\n ===== {} results for model [{}] with [{}] ===== \n'.format(when, model_name, type_of_embeddings))
         for index in range(len(sentence_embeddings)): 
             female = calculate_cosine(sentence_embeddings[index], embedding_female)
             male = calculate_cosine(sentence_embeddings[index], embedding_male)
@@ -122,8 +122,8 @@ def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, sentences, type_
 
     #plt.show()
 
-    save_plot(plt, 'debiasing/remove_gender_subspace/results/diff_plot_DIFFS'+when+type_of_embeddings+'.eps')
-    save_plot(plt, 'debiasing/remove_gender_subspace/results/diff_plot_DIFFS'+when+type_of_embeddings+'.png')
+    save_plot(plt, 'debiasing/remove_gender_subspace/results/diff_plot_{}_{}.eps'.format(when, type_of_embeddings))
+    save_plot(plt, 'debiasing/remove_gender_subspace/results/diff_plot_{}_{}.png'.format(when, type_of_embeddings))
 
 
 
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     sentences = extract_sentences()
     test_sentence_embeddings = get_emb_test_sentences(NorBERT)
     
-    type_of_embeddings = ['SA', 'TWA']
+    type_of_embeddings = ['TWA', 'SA']
    
     for type in type_of_embeddings: 
         diffs = []
@@ -167,8 +167,8 @@ if __name__ == '__main__':
 
             hans, hanna = get_hans_hanna_emb(model_name[i], type)
 
-            diff_list = get_similarity(test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs.txt')
-            diff_list_debiased = get_similarity(neutral_test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs_debiased.txt')
+            diff_list = get_similarity(test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs.txt', 'original')
+            diff_list_debiased = get_similarity(neutral_test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs_debiased.txt', 'debiased')
 
             diffs.append(diff_list)
             diffs_debiased.append(diff_list_debiased)
