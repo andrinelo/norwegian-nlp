@@ -89,10 +89,10 @@ def save_plot(plot, plot_to_filename):
     plot.savefig(plot_to_filename)
 
 
-def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, diff_list_male2female, sentences, type_of_embeddings, when):
+def plot(diff_list_nb_bert, diff_list_male2female, sentences, type_of_embeddings):
 
-    data = {'NorBERT': diff_list_norbert, 'NB-BERT': diff_list_nb_bert, 'mBERT': diff_list_mbert, 'male2female': diff_list_male2female}
-    df = pd.DataFrame(data,columns=['NorBERT','NB-BERT', 'mBERT', 'male2female'], index = ['S{}'.format(i) for i in range(1, len(sentences)+1)])
+    data = {'NB-BERT': diff_list_nb_bert, 'male2female': diff_list_male2female}
+    df = pd.DataFrame(data,columns=['NB-BERT', 'male2female'], index = ['S{}'.format(i) for i in range(1, len(sentences)+1)])
     #df = pd.DataFrame(data,columns=['NorBERT','NB-BERT', 'mBERT'], index = sentences)
 
     plt.style.use('ggplot')
@@ -105,8 +105,8 @@ def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, diff_list_male2f
 
     #plt.show()
 
-    save_plot(plt, 'debiasing/gender_swap/hanna_og_hans/results/diff_plot'+when+type_of_embeddings+'.eps')
-    save_plot(plt, 'debiasing/gender_swap/hanna_og_hans/results/diff_plot'+when+type_of_embeddings+'.png')
+    save_plot(plt, 'debiasing/gender_swap/hanna_og_hans/results/diff_plot'+type_of_embeddings+'.eps')
+    save_plot(plt, 'debiasing/gender_swap/hanna_og_hans/results/diff_plot'+type_of_embeddings+'.png')
 
 
 
@@ -134,8 +134,8 @@ if __name__ == '__main__':
     male2female = 'NbAiLab/nb-bert-ncc-male2female'
 
 
-    model_list = [NorBERT, NB_BERT, mBERT, male2female]
-    model_name = ['NorBERT', 'NB-BERT', 'mBERT', 'male2female']
+    model_list = [NB_BERT, male2female]
+    model_name = ['NB-BERT', 'male2female']
 
     sentences = extract_sentences()
     test_sentence_embeddings = get_emb_test_sentences(NorBERT)
@@ -153,4 +153,4 @@ if __name__ == '__main__':
             diff_list = get_similarity(test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/gender_swap/hanna_og_hans/results/diffs.txt')
             
             diffs.append(diff_list)
-        plot(diffs[0], diffs[1], diffs[2], diffs[3], sentences, type, 'original')
+        plot(diffs[0], diffs[1], sentences, type)
