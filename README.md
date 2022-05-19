@@ -1,12 +1,6 @@
-# master-thesis
-## Count pronouns of corpus
-NorBERT is trained on 
-* Norsk Aviskorpus; 1.7 billion words;
-* Bokmål Wikipedia; 160 million words;
-* Nynorsk Wikipedia; 40 million words;
-
-NB-BERT is trained on NCC
-
+# Description of how to run code for experiments presented in Master's Thesis
+## Detecting- and Measuring Experiments
+### Count pronouns
 The corpus files are excluded from the code due to size and easy availability online. We collected this data on the 20th of January. 
 
 To count the number of pronouns in Norsk Aviskorpus:
@@ -27,48 +21,50 @@ To count the number of pronouns in Norwegian Colossal Corpus (NCC):
 4. Replace the argument in experiments/pronoun_count/pronount_count_in_norwegian_colossal_corpus.py with the path to your jsonfile
 5. Run experiments/pronoun_count/pronount_count_in_norwegian_colossal_corpus.py
 
-Our experiment was performed 20th of January and resulted in this count for the pronouns "han", "ham", "hun", "ho", "henne"
-|  | NO-Wikipedia        | NN-Wikipedia           | Aviskorpus  |NCC  |
-| -------------| ------------- |:-------------:| -----:|-----:|
-| Female pronouns  | 254 752  | 62 667 | 2 304 084 |7 216 408|
-| Male pronouns   | 918 999      | 239 107     |   7 539 723 |23 151 190|
+Al results are written to terminal.
 
-This is the result for the count of the gendered words "mann", "kvinne", "gutt", "gut", "jente", "herre", "dame"
-|  | NO-Wikipedia        | NN-Wikipedia           | Aviskorpus  | NCC |
-| -------------| ------------- |:-------------:| -----:|-----:|
-| Female pronouns  | 8 813  | 1 569 | 259 924 |432 580|
-| Male pronouns   | 18 744      | 3 328     |   490 919 |1 613 404|
+### Embeddings: Masked language modelling 
+First, the most biased adjectives for all models are predicted:
+1. Run experiments/masked_adjectives/extract_top_adjectives.py to get files with top adjectives for each of the models.
+The predicted adjectives are stored in experiments/masked_adjectives/data/...
 
+Further, the results are collected by calculating accregated bias scores and plotting the top biased adjectives for all models. 
+2. Run experiments/masked_adjectives/get_prediction_scores.py to get aggregated prediction scores for all adjectives per model.
+3. Run experiments/masked_adjectives/plot_adjectives.py to get word cloud of top adjectives for all models.
+Both results are stored in experiments/masked_adjectives/results/...
 
-## Principal Component Analysis of NorBERT, NB-BERT and mBERT
-The sentences used can be found in experiments/pca/sample_sentences.xlsx and can be changed to other sentences/target words on the same format. 
-To analyze (plot) the principal componants: 
-1. Fill inn for wanted variables in __main__ function in experiments/pca/find_principal_components.py 
-2. Run experiments/pca/find_principal_components.py 
-3. Plots will be saved in experiments/pca/plots/
+### Downstram Task: Hanna And Hans
+First, the embeddings to be used in the experiment are extracted. 
+1. Run experiments/hanna_og_hans/extract_embeddings_hans_hanna.py for all three models. Change input variable True/False in run() in __main__ to differ between sentence embedding (SA) and han/hun embedding (TWA) for texts. Embeddings are stored in experiments/hanna_og_hans/data/...
 
-Example of plot: Top 10 principal components from 'han', 'hun', 'jente' and 'gutt' in NorBERT embeddings calculated from sentences in sheet 'hun_han_alle' and 'jente_gutt_tilfeldig'
-![plot](experiments/pca/plots/NorBERT.png)
+Further, the difference in distance between Hanna and Hans embeddings are calculated: 
+2. Run experiments/hanna_og_hans/embedding_distance.py. The results are stored in experiments/hanna_og_hans/results/...
 
-## Hanna and hans
-Compare distance between Hanna and Hans descriptions and questions from survey. 
-1. Run experiments/hanna_og_hans/embedding_distance.py
-2. Change input variable True/False in run() in __main__ to differ between sentence embedding and han/hun embedding for texts. 
+## Debiasing Experiments 
+### Debiasing of language models by removing gender subspace
+First, the embeddings to be used in the experiment are extracted. 
+1. Run experiments/hanna_og_hans/extract_embeddings_hans_hanna.py for all three models. Change input variable True/False in run() in __main__ to differ between sentence embedding (SA) and han/hun embedding (TWA) for texts. 
+2. Run debiasing/remove_gender_subspace/extract_embeddings_for_pca.py for all three models. Fill inn for wanted variables in the __main__ function before extracting.
+Both sets of embeddings are stored in debiasing/remove_gender_subspace/data/...
 
-Example of plot: Difference (male-female) distance from sentence embeddings of survey questions to sentence embeddings from text
+Further, the embeddings are debiased through removing the gender subspace and the new distance between Hanna and Hans descriptions and questions from survey is calculated.
+1. Run debiasing/remove_gender_subspace/remove_subspace.py. The results are stored in debiasing/remove_gender_subspace/results/...
 
-![plot](experiments/hanna_og_hans/diff_plot_Sentence_Embeddings.png)
+### Debiasing of language models through retraining on female corpus
+This experiment requires possibility to store large datasets and train complex language models. 
 
-## Masked language modelling 
-Extract top gendered adjectives from Norwegian language models. 
-1. run experiments/masked_adjectives/extract_top_adjectives.py to get files with top adjectives
-2. run experiments/masked_adjectives/get_prediction_scores.py to get aggregated prediction scores for all adjectives
-3. run experiments/masked_adjectives/plot_adjectives.py to get word cloud of top adjectives for all models 
+First, NCC corpus is gender swapped: 
+1. Run debiasing/gender_swap/gender_swap_NCC.py.
+2. Fine-tune NB-BERT on gender swapped corpus.
+Both steps are done by The National Libraby of Norway in this thesis.
 
-Example of plot: Top female biased adjectives from NorBERT
+Further, both measuring experiments for embeddings are redone. 
+For masked adjectives:
+1. Run debiasing/gender_swap/masked_adjectives/extract_top_adjectives.py to get files with top adjectives for new model. The predicted adjectives are stored in debiasing/gender_swap/masked_adjectives/data/...
+2. Run debiasing/gender_swap/masked_adjectives/get_prediction_scores.py to get aggregated prediction scores for all adjectives per model.
+3. Run debiasing/gender_swap/masked_adjectives/plot_adjectives.py to get word cloud of top adjectives for all models.
+Both results are stored in debiasing/gender_swap/masked_adjectives/results/...
 
-![plot](experiments/masked_adjectives/word_cloud_female_NorBERT.png)
-
-## Top Adjectives sentiment analysis
-
-## Sentiment analysis
+For Hanna and Hans:
+1. Run debiasing/gender_swap/hanna_og_hans/extract_embeddings_hans_hanna.py for both models. Change input variable True/False in run() in __main__ to differ between sentence embedding (SA) and han/hun embedding (TWA) for texts. Embeddings are stored in debiasing/gender_swap/hanna_og_hans/data/...
+2. Run debiasing/gender_swap/hanna_og_hans/embedding_distance.py. The results are stored in debiasing/gender_swap/hanna_og_hans/results/...
