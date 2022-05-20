@@ -1,4 +1,3 @@
-# Description of how to run code for experiments presented in Master's Thesis
 ## Detecting- and Measuring Experiments
 ### Count pronouns
 The corpus files are excluded from the code due to size and easy availability online. We collected this data on the 20th of January. 
