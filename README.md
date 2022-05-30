@@ -27,7 +27,7 @@ First, the most biased adjectives for all models are predicted:
 1. Run experiments/masked_adjectives/extract_top_adjectives.py to get files with top adjectives for each of the models.
 The predicted adjectives are stored in experiments/masked_adjectives/data/...
 
-Further, the results are collected by calculating accregated bias scores and plotting the top biased adjectives for all models. 
+Further, the results are collected by calculating aggregated bias scores and plotting the top biased adjectives for all models. 
 2. Run experiments/masked_adjectives/get_prediction_scores.py to get aggregated prediction scores for all adjectives per model.
 3. Run experiments/masked_adjectives/plot_adjectives.py to get word cloud of top adjectives for all models.
 Both results are stored in experiments/masked_adjectives/results/...
