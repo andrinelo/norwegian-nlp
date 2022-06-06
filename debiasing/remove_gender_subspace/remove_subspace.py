@@ -130,10 +130,10 @@ def plot(diff_list_norbert, diff_list_nb_bert, diff_list_mbert, sentences, type_
 def plot_bar(pca_emb, model_name, number_of_features): 
     plt.figure()
     plt.figure(figsize=(10,10))
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=14)
-    plt.xlabel('Principal Component',fontsize=20)
-    plt.ylabel('Percentage of explained variation',fontsize=20)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.xlabel('Principal Component',fontsize=30)
+    plt.ylabel('Percentage of explained variation',fontsize=30)
 
     x = [('PC' + str(i)) for i in range(1, number_of_features+1)]
     y = [pca_emb.explained_variance_ratio_[i] for i in range(number_of_features)]
@@ -163,14 +163,14 @@ if __name__ == '__main__':
         for i in range(len(model_list)):
             
             pca_embedding = get_gender_subspace_emb(model_name[i])
-            neutral_test_sentence_embeddings = remove_gender_subspace(test_sentence_embeddings, pca_embedding)
+            #neutral_test_sentence_embeddings = remove_gender_subspace(test_sentence_embeddings, pca_embedding)
 
-            hans, hanna = get_hans_hanna_emb(model_name[i], type)
+            #hans, hanna = get_hans_hanna_emb(model_name[i], type)
 
-            diff_list = get_similarity(test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs.txt', 'original')
-            diff_list_debiased = get_similarity(neutral_test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs_debiased.txt', 'debiased')
+            #diff_list = get_similarity(test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs.txt', 'original')
+            #diff_list_debiased = get_similarity(neutral_test_sentence_embeddings, hanna, hans, type, model_name[i], 'debiasing/remove_gender_subspace/results/diffs_debiased.txt', 'debiased')
 
-            diffs.append(diff_list)
-            diffs_debiased.append(diff_list_debiased)
-        plot(diffs[0], diffs[1], diffs[2], sentences, type, 'original')
-        plot(diffs_debiased[0], diffs_debiased[1], diffs_debiased[2], sentences, type, 'debiased')
+            #diffs.append(diff_list)
+            #diffs_debiased.append(diff_list_debiased)
+        #plot(diffs[0], diffs[1], diffs[2], sentences, type, 'original')
+        #plot(diffs_debiased[0], diffs_debiased[1], diffs_debiased[2], sentences, type, 'debiased')

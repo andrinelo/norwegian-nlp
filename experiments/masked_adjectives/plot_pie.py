@@ -6,7 +6,7 @@ import pandas as pd
 
 
 
-def plot_pie(results, labels, title, save_to):
+def plot_pie(results, labels, save_to):
     fig, ax = plt.subplots(figsize=(3.5, 3.7), subplot_kw=dict(aspect="equal"))
     colors = {'Female': "#AADEA7", 'Male': "#2D87BB", 'Excluded from results': "#E6F69D"}
 
@@ -18,8 +18,6 @@ def plot_pie(results, labels, title, save_to):
 
     plt.setp(autotexts, size=10)
 
-    ax.set_title(title, fontsize=11)
-
     plt.savefig(save_to)
 
 
@@ -29,15 +27,15 @@ mBERT = np.array([100, 0, 24])
 
 labels = ["Male", "Female", "Excluded from results"]
 
-titleNorBERT = 'Number of adjectives biased in male and \n female direction as predicted by NorBERT'
-titleNB_BERT = 'Number of adjectives biased in male and \n female direction as predicted by NB_BERT'
-titlemBERT = 'Number of adjectives biased in male and \n female direction as predicted by mBERT'
+#titleNorBERT = 'Number of adjectives biased in male and \n female direction as predicted by NorBERT'
+#titleNB_BERT = 'Number of adjectives biased in male and \n female direction as predicted by NB_BERT'
+#titlemBERT = 'Number of adjectives biased in male and \n female direction as predicted by mBERT'
 
 
-NorBERTsave = 'experiments\masked_adjectives\results\plot_pie_NorBERT.eps'
-NB_BERTsave = 'experiments\masked_adjectives\results\plot_pie_NB_BERT.eps'
-mBERTsave = 'experiments\masked_adjectives\results\plot_pie_mBERT.eps'
+NorBERTsave = 'experiments/masked_adjectives/results/plot_pie_NorBERT.eps'
+NB_BERTsave = 'experiments/masked_adjectives/results/plot_pie_NB_BERT.eps'
+mBERTsave = 'experiments/masked_adjectives/results/plot_pie_mBERT.eps'
 
-plot_pie(NorBERT, labels, titleNorBERT, NorBERTsave)
-plot_pie(NB_BERT, labels, titleNB_BERT, NB_BERTsave)
-plot_pie(mBERT, labels, titlemBERT, mBERTsave)
+plot_pie(NorBERT, labels, NorBERTsave)
+plot_pie(NB_BERT, labels, NB_BERTsave)
+plot_pie(mBERT, labels, mBERTsave)
